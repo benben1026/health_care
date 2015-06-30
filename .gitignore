@@ -45,6 +45,11 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 
+# Ignore Python Byte Code Files
+*.pyc
+
 
 #Added by Tang
 **/test.py
+
+

@@ -1,18 +1,48 @@
 __author__ = 'Tang'
 
+
 import json
 import signal
-import sys
+from SymptomParser import SymptomParser
+from Symptom import Symptom
 
-def signal_handler(sig, frame):
-    print('Exit!')
-    sym_list = open("symptom_list", "w")
-    json.dump(symptom_list, sym_list)
-    sys.exit(0)
+
+parser = SymptomParser("symptoms.dict")
+
+
+
+def parse(file_path):
+    fp = open(file_path)
+    diseases = json.load(fp)
+    count = 0
+    for disease_name in diseases:
+        disease = diseases[disease_name]
+        print(str(count) + "/" + str(len(diseases)))
+        new_symptoms_list = []
+        for symptom in disease["Symptoms"]:
+            parse_result = parser.parse(symptom)
+            while not parse_result:
+                print(symptom)
+                hand_input = raw_input()
+                if hand_input == ":wq":
+                    parser.save_dict()
+                    exit("Bye")
+                parse_result = parser.input_parse(hand_input, symptom)
+            new_symptoms_list += parse_result
+        count += 1
+
+        disease["Symptoms"] = new_symptoms_list
+
+
+def signal_handler():
+    print("Parse interrupt")
+    parser.save_dict()
 
 signal.signal(signal.SIGINT, signal_handler)
+parse("data/disease_A")
 
 
+"""
 symptom_list = json.load(open("symptom_list"))
 fp = open("disease.data")
 data = json.load(fp)
@@ -20,6 +50,8 @@ fp.close()
 fp = open("disease.data")
 modified = json.load(fp)
 fp.close()
+
+
 
 def match(sentence):
     match_sym = []
@@ -60,3 +92,4 @@ for name, disease in data.iteritems():
     for symptom in disease["Symptoms"]:
         match_desc = symptom.lower()
         modified[name]["Symptoms"] = match(match_desc)
+"""

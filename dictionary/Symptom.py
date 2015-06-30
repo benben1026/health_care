@@ -1,6 +1,7 @@
 __author__ = 'Tang'
 import json
 
+
 class Symptom:
     @staticmethod
     def restore(s):
@@ -10,9 +11,9 @@ class Symptom:
                 obj = json.loads(s)
             except ValueError:
                 return None
-        elif isinstance(s, list):
+        elif isinstance(s, dict):
             obj = s
-        return Symptom(obj.key, obj.name, obj.pos)
+        return Symptom(obj['keys'], obj['name'], obj['pos'])
 
     def __init__(self, key, name=None, pos=None):
         if type(key) is list:
@@ -34,7 +35,12 @@ class Symptom:
     def match(self, desc):
         key_match = False
         for key in self.keys:
-            if key in desc and (not self.pos or self.pos in desc):
+            lower_key = key.lower()
+            lower_desc = desc.lower()
+            lower_pos = None
+            if self.pos:
+                lower_pos = self.pos.lower()
+            if lower_key in lower_desc and (not lower_pos or lower_pos in lower_desc):
                 key_match = True
 
         return key_match
