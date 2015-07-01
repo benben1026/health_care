@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Online Health Care Platform</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<link rel="stylesheet" href="../bootstrap-3.3.4-dist/css/bootstrap.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="http://54.169.142.43/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="./css/homepage.css">
+		
+		<script> 
+		$(document).ready(function(){
+			$("#flip").click(function(){
+				$("#panel").slideToggle("slow");
+			});
+		});
+		</script>
+		
+		
+	</head>
+	
+	<body>
+		<nav class="navbar navbar-default my-navbar-cut">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand my-navbar-brand" href="./homepage.html">CU Online Health Care Platform</a>
+				</div>
+				<div>
+					<ul class="nav navbar-nav">
+						<li><a href="./homepage.html" class="my-navbar-active">3D Human body</a></li>
+						<li><a href="./category.html" class="my-navbar-li">Categorized A-Z</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+						<li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+						<li><a href="./search.html" class="my-navbar-li"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		
+		<div class="container-fluid my-jumbotron-container-adjust">
+			<div class="jumbotron my-jumbotron ">
+				<div class="container">
+					<h1 class="my-jumbotron-h1">Getting started</h1>      
+					<p class="my-jumbotron-p">Your personal health care advicer.</p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<h1	class="my-h1-homepage">3D Human Body - Male</h1>
+				</div>
+				<div class="col-md-3">
+					<a href="" class="my-gender-switch">change to female >></a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="row">
+						<div class="col-md-2">
+						</div>
+						<div class="col-md-4">
+						<img src="./images/male.png" alt="3D human body male" class="img-rounded" width="200" height="500">
+						</div>
+					</div>
+					<div class="row">
+						
+					</div>
+				</div>
+				<div>
+					<div class="col-md-3">
+						<h2 class="my-second-select">Select an area</h2>
+						<div class="list-group">
+							<a class="list-group-item my-list-group-item">Breast</a>
+							<a class="list-group-item my-list-group-item ">Chest</a>
+							<a class="list-group-item my-list-group-item-active" id="flip">Heart（click here to see demo）</a>
+							<a class="list-group-item my-list-group-item ">Lungs</a>
+							<a class="list-group-item my-list-group-item ">Upper back</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-5" id="panel">
+					<h2 class="my-third-select">Select an specialiesd area</h2>
+			        <div class="list-group">
+						<a href="#" class="list-group-item my-list-group-item">Angina</a>
+						<a href="#" class="list-group-item my-list-group-item ">Blood pressure</a>
+						<a href="#" class="list-group-item my-list-group-item ">Brugada</a>
+						<a href="#" class="list-group-item my-list-group-item-active ">Heart attack</a>
+						<a href="#" class="list-group-item my-list-group-item ">Heart block</a>
+						<a href="#" class="list-group-item my-list-group-item ">Pacemaker implantation </a>
+						<a href="#" class="list-group-item my-list-group-item ">Wolff-Parkinson-White syndrome</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container-fluid">
+			<div class="row">
+				
+			</div>
+		</div>
+		
+	</body>
+</html>

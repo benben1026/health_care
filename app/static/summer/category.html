@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Online Health Care Platform</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<link rel="stylesheet" href="../bootstrap-3.3.4-dist/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/homepage.css">
+		
+	</head>
+	
+	<body>
+	
+		
+		
+		<nav class="navbar navbar-default my-navbar-cut">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand my-navbar-brand" href="./homepage.html">CU Online Health Care Platform</a>
+				</div>
+				<div>
+					<ul class="nav navbar-nav">
+						<li><a href="./homepage.html" class="my-navbar-li">3D Human body</a></li>
+						<li class="active "><a href="./category.html" class="my-navbar-active">Categorized A-Z</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+						<li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+						<li><a href="./search.html" class="my-navbar-li"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		
+		<div class="container-fluid my-jumbotron-container-adjust">
+			<div class="jumbotron my-jumbotron ">
+				<div class="container">
+					<h1 class="my-jumbotron-h1">Getting started</h1>      
+					<p class="my-jumbotron-p">Your personal health care advicer.</p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<h1	class="my-h1-category">Browse by index</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="btn-group">
+					<button type="button" class="btn my-category-btn my-btn-group-active">A</button>
+					<button type="button" class="btn my-category-btn">B</button>
+					<button type="button" class="btn my-category-btn">C</button>
+					<button type="button" class="btn my-category-btn">D</button>
+					<button type="button" class="btn my-category-btn">E</button>
+					<button type="button" class="btn my-category-btn">F</button>
+					<button type="button" class="btn my-category-btn">G</button>
+					<button type="button" class="btn my-category-btn">H</button>
+					<button type="button" class="btn my-category-btn">I</button>
+					<button type="button" class="btn my-category-btn">J</button>
+					<button type="button" class="btn my-category-btn">K</button>
+					<button type="button" class="btn my-category-btn">L</button>
+					<button type="button" class="btn my-category-btn">M</button>
+					<button type="button" class="btn my-category-btn">N</button>
+					<button type="button" class="btn my-category-btn">O</button>
+					<button type="button" class="btn my-category-btn">P</button>
+					<button type="button" class="btn my-category-btn">Q</button>
+					<button type="button" class="btn my-category-btn">R</button>
+					<button type="button" class="btn my-category-btn">S</button>
+					<button type="button" class="btn my-category-btn">T</button>
+					<button type="button" class="btn my-category-btn">U</button>
+					<button type="button" class="btn my-category-btn">V</button>
+					<button type="button" class="btn my-category-btn">W</button>
+					<button type="button" class="btn my-category-btn">X</button>
+					<button type="button" class="btn my-category-btn">Y</button>
+					<button type="button" class="btn my-category-btn">Z</button>
+					<button type="button" class="btn my-category-btn">#</button>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row">
+				<h2 class="my-category-h2">Ab</h2>
+				<div class="col-md-4">
+					<h3 class="my-category-h3">Abdominal aortic aneurysm</h3>
+					<div class="list-group my-category-list-group">
+					   <a href="#" class="list-group-item my-category-list-group-item">Abdominal aortic aneurysm screening</a>
+					</div>
+					<h3 class="my-category-h3">Abdominal pain</h3>
+					<div class="list-group">
+					   <a href="#" class="list-group-item my-category-list-group-item">Food poisoning</a>
+					   <a href="#" class="list-group-item my-category-list-group-item">Gastroenteritis in adults</a>
+					   <a href="#" class="list-group-item my-category-list-group-item">Trapped wind</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<h3 class="my-category-h3">Abortion</h3>
+					<div class="list-group">
+					   <a href="#" class="list-group-item my-category-list-group-item">Find abortion clinics</a>
+					</div>
+					<h3 class="my-category-h3">Abscess</h3>
+					<div class="list-group">
+					   <a href="#" class="list-group-item my-category-list-group-item">Brain abscess</a>
+					   <a href="#" class="list-group-item my-category-list-group-item">Breast abscess</a>
+					   <a href="#" class="list-group-item my-category-list-group-item">Dental abscess</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<h3 class="my-category-h3">Absent periods</h3>
+					<h3 class="my-category-h3">Abuse (domestic)</h3>
+				</div>
+			</div>
+		</div>
+		
+		<script>
+			function precomputing(){
+				
+				$.ajax({
+					url:'/diseases',
+					type:'GET',
+					dataType: 'json',
+					success:function(data){
+						if(data.length == 0 ){
+							alert('You got nothing from server.');
+							return;
+						}
+						var targetArray = Array(26);
+						
+						var x = 0;
+						
+						var i = 0;
+						for(var k = 65; k<91; k++){
+							for(; data[i][1].charCodeAt(0) <= k; i++){
+								targetArray[x] = data[i]; 
+								
+							}
+							x++;
+							
+						}
+						console.log(targetArray);
+						return targetArray;
+					},
+					error:function(){
+						alert('Failed to get data.');
+					}
+				})
+			}
+		
+			$(document).ready(function(){
+				precomputing();
+			})
+				
+				
+				
+				
+				
+				
+				
+			
+		</script>
+	</body>
+</html>
