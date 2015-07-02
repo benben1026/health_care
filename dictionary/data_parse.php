@@ -29,7 +29,7 @@
 	echo "Connect to Database successfully\n";
 	$stmt_insert_disease = $link->prepare("INSERT INTO Disease(disease_name) VALUES(?)");
 	//echo var_dump($stmt_insert_disease);
-	$stmt_update_attribute = $link->prepare("UPDATE Disease SET treatment=?, causes=?, prevention=?, description=? WHERE disease_id=?");
+	$stmt_update_attribute = $link->prepare("UPDATE Disease SET treatment=?, causes=?, prevention=?, description=?, `possible complications`=?, `exams and tests`=? WHERE disease_id=?");
 	//echo var_dump($stmt_update_attribute);
 	$stmt_insert_symptom = $link->prepare("INSERT INTO Symptom(symptom_name) VALUES(?)");
 	//echo var_dump($stmt_insert_symptom);
@@ -55,6 +55,8 @@
 			$attribute_list["causes"] = "";
 			$attribute_list["prevention"] = "";
 			$attribute_list["description"] = "";
+			$attribute_list["possible complications"] = "";
+			$attribute_list["exams and tests"] = "";
 
 			foreach($disease as $attribute_name => $attribute){
 				if(strtolower($attribute_name) == "symptoms"){
@@ -77,17 +79,17 @@
 					}
 					continue;
 				}
-				if(strtolower($attribute_name) != "treatment" && strtolower($attribute_name) != "causes" && strtolower($attribute_name) != "prevention" && strtolower($attribute_name) != "description"){
+				if(strtolower($attribute_name) != "treatment" && strtolower($attribute_name) != "causes" && strtolower($attribute_name) != "prevention" && strtolower($attribute_name) != "description" && strtolower($attribute_name) != "possible complications" && strtolower($attribute_name) != "exams and tests"){
 					echo "No such attribute:" . $attribute_name . "\n";
 					continue;
 				}
 				$attribute_list[strtolower($attribute_name)] = $attribute;
 			}
-			echo "treatment:" . $attribute_list["treatment"] . "\n";
-			echo "causes:" . $attribute_list["causes"] . "\n";
-			echo "prevention:" . $attribute_list["prevention"] . "\n";
-			echo "description:" . $attribute_list["description"] . "\n";
-			$stmt_update_attribute->bind_param("ssssi", $attribute_list["treatment"], $attribute_list["causes"], $attribute_list["prevention"], $attribute_list["description"], $disease_id);
+			//echo "treatment:" . $attribute_list["treatment"] . "\n";
+			//echo "causes:" . $attribute_list["causes"] . "\n";
+			//echo "prevention:" . $attribute_list["prevention"] . "\n";
+			//echo "description:" . $attribute_list["description"] . "\n";
+			$stmt_update_attribute->bind_param("ssssssi", $attribute_list["treatment"], $attribute_list["causes"], $attribute_list["prevention"], $attribute_list["description"], $attribute_list["possible complications"], $attribute_list["exams and tests"], $disease_id);
 			if(!$stmt_update_attribute->execute()){
 				echo "Fail to update attribute:" . $stmt_update_attribute->error . "\n";
 			}
