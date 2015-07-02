@@ -1,10 +1,236 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "shared/nav.html" %}
 
-</body>
-</html>
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="my-h1-category">Browse by index</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="btn-group">
+                <button type="button" id="btnA" class="btn my-category-btn">A</button>
+                <button type="button" id="btnB" class="btn my-category-btn">B</button>
+                <button type="button" id="btnC" class="btn my-category-btn">C</button>
+                <button type="button" id="btnD" class="btn my-category-btn">D</button>
+                <button type="button" id="btnE" class="btn my-category-btn">E</button>
+                <button type="button" id="btnF" class="btn my-category-btn">F</button>
+                <button type="button" id="btnG" class="btn my-category-btn">G</button>
+                <button type="button" id="btnH" class="btn my-category-btn">H</button>
+                <button type="button" id="btnI" class="btn my-category-btn">I</button>
+                <button type="button" id="btnJ" class="btn my-category-btn">J</button>
+                <button type="button" id="btnK" class="btn my-category-btn">K</button>
+                <button type="button" id="btnL" class="btn my-category-btn">L</button>
+                <button type="button" id="btnM" class="btn my-category-btn">M</button>
+                <button type="button" id="btnN" class="btn my-category-btn">N</button>
+                <button type="button" id="btnO" class="btn my-category-btn">O</button>
+                <button type="button" id="btnP" class="btn my-category-btn">P</button>
+                <button type="button" id="btnQ" class="btn my-category-btn">Q</button>
+                <button type="button" id="btnR" class="btn my-category-btn">R</button>
+                <button type="button" id="btnS" class="btn my-category-btn">S</button>
+                <button type="button" id="btnT" class="btn my-category-btn">T</button>
+                <button type="button" id="btnU" class="btn my-category-btn">U</button>
+                <button type="button" id="btnV" class="btn my-category-btn">V</button>
+                <button type="button" id="btnW" class="btn my-category-btn">W</button>
+                <button type="button" id="btnX" class="btn my-category-btn">X</button>
+                <button type="button" id="btnY" class="btn my-category-btn">Y</button>
+                <button type="button" id="btnZ" class="btn my-category-btn">Z</button>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="container">
+        <div class="row">
+            <h2 class="my-category-h2">Ab</h2>
+            <div class="col-md-4">
+                <h3 class="my-category-h3">Abdominal aortic aneurysm</h3>
+                <div class="list-group my-category-list-group">
+                   <a href="#" class="list-group-item my-category-list-group-item">Abdominal aortic aneurysm screening</a>
+                </div>
+                <h3 class="my-category-h3">Abdominal pain</h3>
+                <div class="list-group">
+                   <a href="#" class="list-group-item my-category-list-group-item">Food poisoning</a>
+                   <a href="#" class="list-group-item my-category-list-group-item">Gastroenteritis in adults</a>
+                   <a href="#" class="list-group-item my-category-list-group-item">Trapped wind</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h3 class="my-category-h3">Abortion</h3>
+                <div class="list-group">
+                   <a href="#" class="list-group-item my-category-list-group-item">Find abortion clinics</a>
+                </div>
+                <h3 class="my-category-h3">Abscess</h3>
+                <div class="list-group">
+                   <a href="#" class="list-group-item my-category-list-group-item">Brain abscess</a>
+                   <a href="#" class="list-group-item my-category-list-group-item">Breast abscess</a>
+                   <a href="#" class="list-group-item my-category-list-group-item">Dental abscess</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h3 class="my-category-h3">Absent periods</h3>
+                <h3 class="my-category-h3">Abuse (domestic)</h3>
+            </div>
+        </div>
+    </div>-->
+    <script>
+
+        function precomputing() {
+
+            $.ajax({
+                url: '/api/diseases',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length == 0) {
+                        alert('You got nothing from server.');
+                        return;
+                    }
+                    var temp = [];
+                    var targetArray = [];
+                    for (var i = 0, last = data[0][1].charAt(0); ; last = data[i][1].charAt(0)) {
+                        for (temp = []; i < data.length && data[i][1].charAt(0) == last; i++) {
+
+                            temp.push(data[i]);
+                        }
+                        targetArray.push(temp);
+                        if (i >= data.length)
+                            break;
+                    }
+                    createContents(targetArray);
+                },
+                error: function () {
+                    alert('Failed to get data.');
+                }
+            })
+        }
+
+        function createContents(targetArray) {
+            var body = document.body;
+
+            for (var i = targetArray.length; i > 0; i--) {
+                var temp = targetArray.pop();
+                var category = temp[0][1].charAt(0);
+                var newDiv = $('<div />', {
+                    'class': "container containerControl",
+                    'id': category
+                });
+                newDiv.css({"display": "none"});
+                $(newDiv).appendTo(body);
+
+                var secondLetter = temp[0][1].charCodeAt(1);
+                var tempRow = [];
+                for (var j = 0; j < temp.length;) {
+                    var thisLetter = temp[j][1].charCodeAt(1);
+                    if (thisLetter > secondLetter) {
+                        secondLetter = temp[j][1].charCodeAt(1);
+                        createRow(temp[j - 1][1].charAt(1), tempRow, category);
+                        tempRow = [];
+                    }
+                    if (j == temp.length - 1) {
+                        tempRow.push(temp[j]);
+                        createRow(temp[j][1].charAt(1), tempRow, category);
+                        temp = [];
+                    }
+                    tempRow.push(temp[j]);
+                    j++;
+                }
+            }
+            var defaultBtn = document.getElementById('btnA');
+            $(defaultBtn).addClass("my-btn-group-active");
+            var defaultContainer = document.getElementById('A');
+            $(defaultContainer).css({"display": "block"});
+        }
+
+        function createRow(letter, tempRow, category) {
+            var targetDiv = document.getElementById(category);
+
+            var newRow = $('<div />', {
+                'class': "row",
+                'id': category + letter
+            });
+            $(newRow).appendTo(targetDiv);
+            var newH2 = $('<h2 />', {
+                class: "my-category-h2",
+                html: category + letter
+            });
+            $(newH2).appendTo(newRow);
+
+            var newCol1 = $('<div />', {
+                class: "col-md-4"
+            });
+            $(newCol1).appendTo(newRow);
+            var newList1 = $('<div />', {
+                class: "list-group"
+            });
+            $(newList1).appendTo(newCol1);
+
+            var newCol2 = $('<div />', {
+                class: "col-md-4"
+            });
+            $(newCol2).appendTo(newRow);
+            var newList2 = $('<div />', {
+                class: "list-group"
+            });
+            $(newList2).appendTo(newCol2);
+
+            var newCol3 = $('<div />', {
+                class: "col-md-4"
+            });
+            $(newCol3).appendTo(newRow);
+            var newList3 = $('<div />', {
+                class: "list-group"
+            });
+            $(newList3).appendTo(newCol3);
+
+            var remainder = tempRow.length % 3;
+            var numInCol = (tempRow.length - remainder) / 3;
+
+            for (var i = 0; i < (numInCol + remainder); i++) {
+                var temp = tempRow[i];
+                var newItem = $('<a />', {
+                    class: "list-group-item my-category-list-group-item",
+                    html: temp[1],
+                    href: "/disease/" + temp[0]
+                });
+                $(newItem).appendTo(newList1);
+            }
+            for (var i = (numInCol + remainder); i < (numInCol * 2 + remainder); i++) {
+                var temp = tempRow[i];
+                var newItem = $('<a />', {
+                    class: "list-group-item my-category-list-group-item",
+                    html: temp[1],
+                    href: "/disease/" + temp[0]
+                });
+                $(newItem).appendTo(newList2);
+            }
+            for (var i = (numInCol * 2 + remainder); i < (numInCol * 3 + remainder); i++) {
+                var temp = tempRow[i];
+                var newItem = $('<a />', {
+                    class: "list-group-item my-category-list-group-item",
+                    html: temp[1],
+                    href: "/disease/" + temp[0]
+                });
+                $(newItem).appendTo(newList3);
+            }
+        }
+
+        $(document).ready(function () {
+            precomputing();
+
+            for (var i = 65; i < 91; i++) {
+
+
+            }
+            $(".my-category-btn").click(function () {
+                $(".containerControl").hide();
+                $(".my-category-btn").removeClass("my-btn-group-active");
+                $(this).addClass("my-btn-group-active");
+                var current = $(this).attr("id");
+                current = current.charAt(3);
+                current = "#" + current;
+                $(current).show();
+            });
+
+        })
+    </script>
+{% endblock %}

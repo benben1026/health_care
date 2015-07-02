@@ -2,14 +2,27 @@ from flask import render_template, request
 from app import app
 import json
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
-@app.route('/diseases', methods=['GET'])
+@app.route('/disease/<disease_id>')
+def disease_entry(disease_id):
+    from model import Session, Disease
+
+    session = Session()
+    disease = session.query(Disease).filter(Disease.disease_id == disease_id).first().to_dict()
+    return render_template('disease.html', disease = disease)
+@app.route('/category')
+def disease_category():
+    return render_template('category.html')
+# ------------------------------------- Ajax API ------------------------------------------#
+@app.route('/api/diseases', methods=['GET'])
 def get_diseases_list():
     from model import Session, Disease
+
     session = Session()
     limit = request.args.get('limit')
     offset = request.args.get('offset')
@@ -21,10 +34,11 @@ def get_diseases_list():
     result = tmp_query.all()
     return json.dumps(result)
 
-@app.route('/diseases/<disease_id>')
+
+@app.route('/api/diseases/<disease_id>')
 def get_disease_detail(disease_id):
-    from model import Session, Disease
+    from model import Session, Disease\
+
     session = Session()
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first()
     return json.dumps(disease.to_dict())
-

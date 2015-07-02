@@ -1,10 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "shared/nav.html" %}
 
-</body>
-</html>
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="my-h1-disease">{{ disease.name }}</h1>
+            </div>
+
+            {% if disease.description %}
+                <div class="col-md-12">
+                    <h3 class="my-h3-disease">Introduction</h3>
+                </div>
+                <div class="col-md-12">
+                    <p>{{ disease.description }}</p>
+                </div>
+            {% endif %}
+
+            {% if disease.symptoms %}
+                <div class="col-md-12">
+                    <h3 class="my-h3-disease">Symptoms</h3>
+                </div>
+                <div class="col-md-12">
+                    {% for symptom in disease.symptoms %}
+                        <li>{{ symptom.name }}</li>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if disease.causes %}
+                <div class="col-md-12">
+                    <h3 class="my-h3-disease">What causes a {{ disease.name }}?</h3>
+                </div>
+                <div class="col-md-12">
+                    <p>{{ disease.causes }}</p>
+                </div>
+            {% endif %}
+
+            {% if disease.treatment %}
+                <div class="col-md-12">
+                    <h3 class="my-h3-disease">Treatement</h3>
+                </div>
+                <div class="col-md-12">
+                    <p>{{ disease.treatment }}</p>
+                </div>
+            {% endif %}
+
+            {% if disease.prevention %}
+                <div class="col-md-12">
+                    <h3 class="my-h3-disease">Prevention</h3>
+                </div>
+                <div class="col-md-12">
+                    <p>{{ disease.prevention }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
