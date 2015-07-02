@@ -17,6 +17,8 @@ class Disease(Base):
     causes = Column(Text)
     prevention = Column(Text)
     description = Column(Text)
+    possible_complications = Column(Text, name="possible complications")
+    exams_and_tests = Column(Text, name="exams and tests")
     symptoms = relationship("Symptom", secondary=Disease_Has_Symptom)
 
     def to_dict(self):
@@ -30,6 +32,8 @@ class Disease(Base):
                 "causes": self.causes,
                 "prevention": self.prevention,
                 "description": self.description,
+                "possible_complications": self.possible_complications,
+                "exams_and_tests": self.exams_and_tests,
                 "symptoms": symptoms_obj}
 
 class Symptom(Base):
