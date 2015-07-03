@@ -55,6 +55,24 @@
                     <p>{{ disease.prevention }}</p>
                 </div>
             {% endif %}
+
+            {% if disease.possible_complications %}
+                <div class="col-md-12">
+                    <h3 class="my-h3-disease">Possible Complications</h3>
+                </div>
+                <div class="col-md-12">
+                    <p>{{ disease.possible_complications }}</p>
+                </div>
+            {% endif %}
+
+            {% if disease.exams_and_tests %}
+                <div class="col-md-12">
+                    <h3 class="my-h3-disease">Exams and Tests</h3>
+                </div>
+                <div class="col-md-12">
+                    <p>{{ disease.exams_and_tests }}</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
