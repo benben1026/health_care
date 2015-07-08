@@ -49,7 +49,7 @@ def get_disease_detail(disease_id):
 
 @app.route('/api/service/symptom-match', methods=['POST'])
 def symptom_match():
-    from model import Symptom, DiseaseHasSymptom, Session, FullTextSearch
+    from model import Symptom, Disease, DiseaseHasSymptom, Session, FullTextSearch
     from sqlalchemy import func, desc
     session = Session()
     if request.method == "POST":
@@ -66,4 +66,16 @@ def symptom_match():
             diseases_matched = session.query(DiseaseHasSymptom.disease_id, func.count(DiseaseHasSymptom.symptom_id).label("rel"))\
                 .filter(DiseaseHasSymptom.symptom_id.in_(symptoms_matched)).group_by(DiseaseHasSymptom.disease_id)\
                 .order_by(desc("rel")).all()
-    return json.dumps(diseases_matched)
+            diseases_list = {}
+            diseases_limit = []
+
+            for diseases_matched_tuple in diseases_matched:
+                diseases_limit.append(diseases_matched_tuple[0])
+                diseases_list[diseases_matched_tuple[0]] = {"relevance": diseases_matched_tuple[1]}
+            diseases_detail = session.query(Disease.disease_id, Disease.disease_name, Disease.description)\
+                .filter(Disease.disease_id.in_(diseases_limit)).all()
+            for disease_detail in diseases_detail:
+                cur = diseases_list[disease_detail[0]]
+                cur["name"] = disease_detail[1]
+                cur["description"] = disease_detail[2]
+            return json.dumps(diseases_list)
