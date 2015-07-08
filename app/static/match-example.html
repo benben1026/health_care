@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="container">
+
+</div>
+
+<script>
+    window.onload = function () {
+        var reqStr = ["cough", "fever"];
+        var query = function () {
+            var con = new XMLHttpRequest();
+            con.open("POST", "/api/service/symptom-match");
+            con.setRequestHeader("Content-Type", "application/json");
+            con.onreadystatechange = function () {
+                if (con.readyState == 4) {
+                    render(JSON.parse(con.responseText));
+                }
+            };
+            con.send(JSON.stringify(reqStr));
+        };
+        var render = function(data){
+            var container = document.getElementById("container");
+            var str = "";
+            for (var diseaseId in data){
+                str += "<h3>";
+                str += data[diseaseId]["name"];
+                str += "</h3>";
+
+                str += "<p>";
+                str += data[diseaseId]["description"];
+                str += "</p>";
+            }
+            container.innerHTML = str;
+
+        };
+        query();
+    }
+</script>
+
+</body>
+</html>
