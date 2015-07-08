@@ -1,13 +1,14 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, Text, BigInteger, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
+from sqlalchemy_fulltext import FullText, FullTextSearch
 
 Base = declarative_base()
 
-Disease_Has_Symptom = Table('Disease_Has_Symptom', Base.metadata,
-        Column('disease_id', Integer, ForeignKey('Disease.disease_id')),
-        Column('symptom_id', BigInteger, ForeignKey('Symptom.symptom_id'))
-)
+class DiseaseHasSymptom(Base):
+    __tablename__ = "Disease_Has_Symptom"
+    disease_id = Column(Integer, ForeignKey('Disease.disease_id'), primary_key=True)
+    symptom_id = Column(BigInteger, ForeignKey('Symptom.symptom_id'), primary_key=True)
 
 class Disease(Base):
     __tablename__ = "Disease"
@@ -19,7 +20,7 @@ class Disease(Base):
     description = Column(Text)
     possible_complications = Column(Text, name="possible complications")
     exams_and_tests = Column(Text, name="exams and tests")
-    symptoms = relationship("Symptom", secondary=Disease_Has_Symptom)
+    symptoms = relationship("Symptom", secondary="Disease_Has_Symptom")
 
     def to_dict(self):
         symptoms_obj = []
@@ -36,8 +37,9 @@ class Disease(Base):
                 "exams_and_tests": self.exams_and_tests,
                 "symptoms": symptoms_obj}
 
-class Symptom(Base):
+class Symptom(Base, FullText):
     __tablename__ = "Symptom"
+    __fulltext_columns__ = ['symptom_name']
     symptom_id = Column(BigInteger, primary_key=True)
     symptom_name = Column(Text)
     symptom_type = Column(String(255))
