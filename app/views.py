@@ -46,3 +46,24 @@ def get_disease_detail(disease_id):
     session = Session()
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first()
     return json.dumps(disease.to_dict())
+
+@app.route('/api/service/symptom-match', methods=['POST'])
+def symptom_match():
+    from model import Symptom, DiseaseHasSymptom, Session, FullTextSearch
+    from sqlalchemy import func, desc
+    session = Session()
+    if request.method == "POST":
+        match_list = request.get_json()
+        fulltext_limit = None
+        if match_list:
+            match_list[0] = "+"+match_list[0]
+            fulltext_limit = " +".join(match_list)
+        if fulltext_limit:
+            symptoms_matched = []
+            symptoms_matched_result = session.query(Symptom.symptom_id).filter(FullTextSearch(fulltext_limit, Symptom)).all()
+            for symptom_result_tuple in symptoms_matched_result:
+                symptoms_matched.append(symptom_result_tuple[0])
+            diseases_matched = session.query(DiseaseHasSymptom.disease_id, func.count(DiseaseHasSymptom.symptom_id).label("rel"))\
+                .filter(DiseaseHasSymptom.symptom_id.in_(symptoms_matched)).group_by(DiseaseHasSymptom.disease_id)\
+                .order_by(desc("rel")).all()
+    return json.dumps(diseases_matched)
