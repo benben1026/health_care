@@ -5,10 +5,7 @@ from sqlalchemy_fulltext import FullTextSearch, FullTextMode
 
 import os
 
-if os.getenv("COMPUTERNAME") == "ALSTON-TABLET":
-    engine = create_engine('mysql://root@127.0.0.1/healthcare')
-else:
-    engine = create_engine('mysql://tang:a1a2a3a4@localhost/healthcare')
+engine = create_engine('mysql://healthcare:sf4e5UcjjFhy8u2z@128.199.82.15/healthcare')
 #Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
