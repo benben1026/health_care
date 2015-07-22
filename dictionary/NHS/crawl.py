@@ -86,7 +86,25 @@ class Getter:
         print("Index of alphabet {0} complete".format(alphabet))
         return True
 
-    def crawl_page(self, url, alphabet):
+    @classmethod
+    def craw_page(cls, name, container):
+        page = None
+        try:
+            page = urllib2.urlopen(container["link"])
+        except urllib2.URLError:
+            print("Can not open term {0} with page link {1}".format(name, container["link"]))
+        soup = BeautifulSoup(page)
+        is_disease = cls.is_disease(soup)
+        if is_disease:
+            # If is_disease returns a link, then the symptoms are in another page
+            if isinstance(is_disease, str):
+                symptoms_link = is_disease
+                symptoms_page = urllib2.urlopen(symptoms_link)
+                symptoms_soup = BeautifulSoup(symptoms_page)
+                cls.parse_symptom(symptoms_soup)
+
+    @staticmethod
+    def parse_symptom(symptoms_soup):
         pass
 
     @staticmethod
@@ -95,7 +113,7 @@ class Getter:
         container = soup.find(id="ctl00_PlaceHolderMain_articles")
         for link in container.find_all("a"):
             if "Symptoms" in link.text:
-                return True
+                return link["href"]
         # Check whether there is an symptoms description in introduction
         container = soup.find(class_="main-content")
         for title in container.find_all('h3'):
