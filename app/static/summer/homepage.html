@@ -7,13 +7,24 @@
 		<link rel="stylesheet" href="../bootstrap-3.3.4-dist/css/bootstrap.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="http://54.169.142.43/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="../css/homepage.css">
+		<link rel="stylesheet" href="./css/homepage.css">
 		
 		<script> 
 		$(document).ready(function(){
 			$("#flip").click(function(){
 				$("#panel").slideToggle("slow");
 			});
+			$("#genderSwitch").click(function(){
+			console.log("haha");
+				if($("#myFrame").attr("src").indexOf("testMale") >= 0 ){
+					$("#myFrame").attr("src","http://54.169.142.43/summer/testFemale.html");
+					$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
+				}
+				else{
+					$("#myFrame").attr("src","http://54.169.142.43/summer/testMale.html");
+					$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
+				}
+			})
 		});
 		</script>
 		
@@ -55,27 +66,25 @@
 					<h1	class="my-h1-homepage">3D Human Body - Male</h1>
 				</div>
 				<div class="col-md-3">
-					<a href="" class="my-gender-switch">change to female >></a>
+					<a  class="my-gender-switch" id="genderSwitch">change gender >></a>
 				</div>
 			</div>
 		</div>
 		
 		<div class="container">
 			<div class="row">
-				<div class="col-md-3">
-					<div class="row">
-						<div class="col-md-2">
-						</div>
-						<div class="col-md-4">
-						<img src="./images/male.png" alt="3D human body male" class="img-rounded" width="200" height="500">
-						</div>
-					</div>
-					<div class="row">
-						
-					</div>
+				<div class="col-md-5">
+					<iframe  
+					id="myFrame" 
+					name="theFrame"
+					class="my-frame" 
+					style="display:hidden"
+					scrolling="no" 
+					seamless="seamless"
+					src="http://54.169.142.43/summer/testMale.html"></iframe>
 				</div>
 				<div>
-					<div class="col-md-3">
+					<div class="col-md-3" >
 						<h2 class="my-second-select">Select an area</h2>
 						<div class="list-group">
 							<a class="list-group-item my-list-group-item">Breast</a>
@@ -86,7 +95,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-5" id="panel">
+				<div class="col-md-4" id="panel">
 					<h2 class="my-third-select">Select an specialiesd area</h2>
 			        <div class="list-group">
 						<a href="#" class="list-group-item my-list-group-item">Angina</a>
@@ -101,11 +110,6 @@
 			</div>
 		</div>
 		
-		<div class="container-fluid">
-			<div class="row">
-				
-			</div>
-		</div>
 		
 	</body>
 </html>

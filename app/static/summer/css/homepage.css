@@ -208,4 +208,11 @@
 .my-h3-disease{
 	color:rgb(212,96,93) !important;
 	font-family: 'Helvetica Neue Light Extended', Helvetica, Arial, sans-serif !important;
+	
+}
+.my-frame{
+	width:400px;
+	height:400px;
+	overflow-y:hidden;
+	border:none;
 }

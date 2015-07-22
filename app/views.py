@@ -18,10 +18,13 @@ def disease_entry(disease_id):
 @app.route('/category')
 def disease_category():
     return render_template('category.html')
-    
+
+""""    
 @app.route('/search')
 def search():
     return render_template('search.html')
+"""
+
 # ------------------------------------- Ajax API ------------------------------------------#
 @app.route('/api/diseases', methods=['GET'])
 def get_diseases_list():

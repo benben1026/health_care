@@ -21,7 +21,7 @@
 					$(newDiv).css({
 						"margin":"10px"})
 					var btn1 = $('<button/>',{
-						'class': "btn btn-primary"
+						'class': "btn btn-primary user-input"
 					});
 					$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
 					$(btn1).appendTo(newDiv);
@@ -47,7 +47,7 @@
 				$(newDiv).css({
 					"margin":"10px"})
 				var btn1 = $('<button/>',{
-					'class': "btn btn-primary"
+					'class': "btn btn-primary user-input"
 				});
 				$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
 				$(btn1).appendTo(newDiv);
@@ -63,6 +63,30 @@
 				$(btn2).click(function(){
 					$(this).parent().remove();
 				})
+			}
+			function search(){
+				var userInputs = $("button").filter(".user-input");
+				if( userInputs.length > 0){
+					console.log(userInputs[0]);
+					var temp = [];
+					for(var i = 0; i < userInputs.length; i++){
+						temp[i] = userInputs[i].innerHTML;
+					}
+					var jsonString = JSON.stringify(temp); 
+					$.ajax({
+						url:'/api/service/symptom-match',
+						type:'POST',
+						dataType: 'json',
+						contentType: 'application/json',
+						data: jsonString,
+						success:function(data){
+							alert('success');
+						},
+						error:function(){
+							alert('Failed to get data.');
+						}
+					})
+				}
 			}
 			
 		$(document).ready(function(){
@@ -123,7 +147,7 @@
 					<button type="button" class="btn btn-default my-search-btn-add" onclick="add()">Add it</button>
 				</div>
 				<div class="col-md-1">
-					<button type="button" class="btn btn-default my-search-btn-add">Search</button>
+					<button type="button" class="btn btn-default my-search-btn-add" onclick="search()">Search</button>
 				</div>
 				
 			</div>
