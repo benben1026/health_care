@@ -88,6 +88,8 @@ class Getter:
 
     @classmethod
     def craw_page(cls, name, container):
+        container["data"] = {}
+        obj = container["data"]
         page = None
         try:
             page = urllib2.urlopen(container["link"])
@@ -99,13 +101,23 @@ class Getter:
             # If is_disease returns a link, then the symptoms are in another page
             if isinstance(is_disease, str):
                 symptoms_link = is_disease
-                symptoms_page = urllib2.urlopen(symptoms_link)
-                symptoms_soup = BeautifulSoup(symptoms_page)
-                cls.parse_symptom(symptoms_soup)
+                symptoms_page = None
+                try:
+                    symptoms_page = urllib2.urlopen(symptoms_link)
+                except urllib2.URLError:
+                    print("Can not open symptom page of term {0}".format(name))
+                if symptoms_page:
+                    symptoms_soup = BeautifulSoup(symptoms_page)
+                    symptoms_list = cls.parse_symptom(symptoms_soup)
+                    obj["Symptoms"] = symptoms_list
 
     @staticmethod
     def parse_symptom(symptoms_soup):
-        pass
+        rv = []
+        container = symptoms_soup.find(class_="main-content")
+        for symptom in container.find_all("li"):
+            rv.append(symptom.text)
+        return rv
 
     @staticmethod
     def is_disease(soup):
