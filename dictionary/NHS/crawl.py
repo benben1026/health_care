@@ -1,22 +1,22 @@
 __author__ = 'tang'
 
 import tempfile, urllib2, json
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
 
 class Getter:
-    def __init__(self, path):
+    def __init__(self, path, read=False):
         self.progress = None
         self.content = None
         self.f = None
         if not path:
             path = "NHS.data"
-        self.load(path)
+        self.load(path, read=read)
 
     def create(self, path):
         self.f = open(path, "w")
 
-    def load(self, path):
+    def load(self, path, read=False):
         data = None
         try:
             self.f = open(path, "r")
@@ -25,7 +25,10 @@ class Getter:
             except ValueError:
                 pass
             self.f.close()
-            self.f = open(path, "w")
+            if read:
+                self.f = open(path, "r")
+            else:
+                self.f = open(path, "w")
         except IOError:
             print("Can not open file {0}".format(path))
             self.create(path)
@@ -86,24 +89,86 @@ class Getter:
         print("Index of alphabet {0} complete".format(alphabet))
         return True
 
+    def traverse_alphabet(self, alphabet):
+        if alphabet not in self.progress:
+            self.progress[alphabet] = {}
+        if "content" in self.progress[alphabet] and self.progress[alphabet]["content"]:
+            return 0, 0
+        count = 0
+        satisfied = 0
+        container = self.content[alphabet]["index"]
+        for item in container:
+            count += 1
+            if self.test_page(item, container[item]):
+                satisfied += 1
+            for sub_item in container[item]["sub_layer"]:
+                count += 1
+                if self.test_page(sub_item, container[item]["sub_layer"][sub_item]):
+                    satisfied += 1
+        self.progress[alphabet]["content"] = True
+
+        return count, satisfied
+
+    def to_database_format(self, fp=None):
+        index = {}
+        rv = {}
+        for c in range(65, 91):
+            alphabet = chr(c)
+            for name in self.content[alphabet]["index"]:
+                item = self.content[alphabet]["index"][name]
+                link = item["link"]
+                if link not in index:
+                    index[link] = True
+                    if "data" in item:
+                        rv[name] = item["data"]
+                for sub_name in item["sub_layer"]:
+                    sub_item = item["sub_layer"][sub_name]
+                    sub_link = sub_item["link"]
+                    if sub_link not in index:
+                        index[sub_link] = True
+                        if "data" in sub_item:
+                            rv[sub_name] = sub_item["data"]
+
+        if fp:
+            json.dump(rv, fp)
+        return rv
+
+    @classmethod
+    def test_page(cls, name, container):
+        try:
+            cls.craw_page(name, container)
+        except:
+            return False
+        return True
+
     @classmethod
     def craw_page(cls, name, container):
+        print("Process page {0}".format(name))
         container["data"] = {}
         obj = container["data"]
         page = None
         try:
-            page = urllib2.urlopen(container["link"])
+            if container["link"][0] == '/':
+                link = "http://www.nhs.uk" + container["link"]
+            else:
+                return "None symptom page"
+            page = urllib2.urlopen(link)
         except urllib2.URLError:
             print("Can not open term {0} with page link {1}".format(name, container["link"]))
         soup = BeautifulSoup(page)
         is_disease = cls.is_disease(soup)
+        symptoms_link = None
         if is_disease:
             # If is_disease returns a link, then the symptoms are in another page
-            if isinstance(is_disease, str):
+            if isinstance(is_disease, str) or isinstance(is_disease, unicode):
                 symptoms_link = is_disease
                 symptoms_page = None
+                if symptoms_link[0] == '/':
+                    symptoms_full_link = "http://www.nhs.uk" + symptoms_link
+                else:
+                    symptoms_full_link = symptoms_link
                 try:
-                    symptoms_page = urllib2.urlopen(symptoms_link)
+                    symptoms_page = urllib2.urlopen(symptoms_full_link)
                 except urllib2.URLError:
                     print("Can not open symptom page of term {0}".format(name))
                 if symptoms_page:
@@ -111,12 +176,66 @@ class Getter:
                     symptoms_list = cls.parse_symptom(symptoms_soup)
                     obj["Symptoms"] = symptoms_list
 
+        # Parse introduction page
+        data = cls.parse_block(soup)
+        obj["Introduction"] = data
+        # Traverse other blocks except symptoms block
+        blocks_container = soup.find(id="ctl00_PlaceHolderMain_articles")
+        for link in blocks_container.find_all("a"):
+            if link["href"] and link["href"] != symptoms_link:
+                link_text = [text for text in link.stripped_strings]
+                cls.craw_block(obj, link_text[1], link["href"])
+
+        return container
+
+    @classmethod
+    def craw_block(cls, obj, block_name, link):
+        block_page = None
+        if link[0] == '/':
+            link = "http://www.nhs.uk" + link
+        try:
+            block_page = urllib2.urlopen(link)
+        except urllib2.URLError:
+            print("Can not open block {0}".format(block_name))
+
+        if not block_page:
+            return
+        soup = BeautifulSoup(block_page)
+        data = cls.parse_block(soup)
+        obj[block_name] = data
+
     @staticmethod
     def parse_symptom(symptoms_soup):
         rv = []
         container = symptoms_soup.find(class_="main-content")
         for symptom in container.find_all("li"):
             rv.append(symptom.text)
+        return rv
+
+    @staticmethod
+    def parse_block(soup):
+        rv = {"Description": None}
+        container = soup.find(class_="main-content")
+        content_begin = False
+        current_section = "Description"
+        for element in container.children:
+            if isinstance(element, NavigableString):
+                continue
+            if content_begin:
+                if element.name == "h3":
+                    current_section = element.text
+                    rv[current_section] = None
+                elif element.name != "div":
+                    if rv[current_section] is None:
+                        rv[current_section] = element.text
+                    else:
+                        rv[current_section] = rv[current_section] + " " + element.text
+                    if element.name == "h4":
+                        rv[current_section] += " | "
+
+            if "Introduction" in element.text or element.name == "h2":
+                content_begin = True
+
         return rv
 
     @staticmethod
