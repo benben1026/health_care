@@ -1,10 +1,11 @@
 __author__ = 'tang'
 
 
-from crawl import Getter
+from position import PosGetter
 from bs4 import BeautifulSoup
 
-t = Getter("NHS.data", read=True)
-
-
+t = PosGetter("NHS.data", read=True)
 t.to_database_format(open("NHS_DB.data", "w"))
+
+
+# t.to_database_format(open("NHS_DB.data", "w"))
