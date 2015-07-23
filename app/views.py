@@ -80,3 +80,13 @@ def symptom_match():
                 cur["name"] = disease_detail[1]
                 cur["description"] = disease_detail[2]
             return json.dumps(diseases_list)
+
+@app.route('/api/service/search-synonym/<query>')
+def search_synonym(query):
+    from model import PubmedGetter, Session
+    from bs4 import BeautifulSoup
+
+    session = Session()
+    p = PubmedGetter(query)
+    p.send()
+    return p.extract()

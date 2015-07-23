@@ -1,9 +1,9 @@
 __author__ = 'zhou'
 
-from pubmed import PubmebGetter
+from pubmed import PubmedGetter
 from bs4 import BeautifulSoup
 
-t = PubmebGetter("Anal fistula")
+t = PubmedGetter("Anal fistula")
 t.send()
 
 print(t.extract())
