@@ -40,7 +40,9 @@
 				}
 				
 			}
-			function addFromResults(symptom){
+			/*
+			function addFromResults(){
+				var symptom = this.innerHTML;
 				var newDiv = $('<div />',{
 					'class':"btn-group"
 				});
@@ -64,10 +66,10 @@
 					$(this).parent().remove();
 				})
 			}
+			*/
 			function search(){
 				var userInputs = $("button").filter(".user-input");
 				if( userInputs.length > 0){
-					console.log(userInputs[0]);
 					var temp = [];
 					for(var i = 0; i < userInputs.length; i++){
 						temp[i] = userInputs[i].innerHTML;
@@ -80,7 +82,41 @@
 						contentType: 'application/json',
 						data: jsonString,
 						success:function(data){
-							alert('success');
+							
+							var divDisplay = document.getElementById("searchResults")
+							var str = "";
+							for (var diseaseId in data){
+								str += "<h2 class='col-md-12'><a class='my-search-disease-name'>";
+								str += data[diseaseId]["name"];
+								str += "</a></h2>";
+								str += "<h4 class='col-md-2 my-search-disease-match1'>";
+								str += "Its symptoms:";
+								str += "</h4>";
+
+								//wait until the ajax data was sent back
+								$.ajax({
+									url:'/api/diseases/'+diseaseId,
+									type:'GET',
+									dataType:'json',
+									async: false,
+									success:function(data){
+										console.log("gg");
+										for(var i = 0; i < data.symptoms.length; i++){
+											str += "<div class='btn-group my-search-btn-group' ><button type='button' class='btn btn-primary my-search-btn-symptom' >";
+											str += data.symptoms[i].name;
+											str += "</button></div>";
+										}
+									},
+									error:function(){
+										alert('Failed to get data.');
+									}
+								})
+								console.log("hh");
+								str += "<p class='col-md-12'>";
+								str += data[diseaseId]["description"];
+								str += "</p>";
+							}
+							divDisplay.innerHTML = str;
 						},
 						error:function(){
 							alert('Failed to get data.');
@@ -161,10 +197,11 @@
 		</div>
 		
 		<div class="container">
+			<div class="col-md-12">
+				<h1	class="my-h1-search">Searching Results</h1>
+			</div>
 			<div class="row">
-				<div class="col-md-12">
-					<h1	class="my-h1-search">Searching Results</h1>
-				</div>
+				
 				<h2 class="col-md-12"><a class="my-search-disease-name">Disease A</a></h2>
 				
 				<h4 class="col-md-2 my-search-disease-match1">Matched Disease:</h4>
@@ -172,15 +209,15 @@
 				<h4 class="col-md-2 my-search-disease-match1">Its symptoms:</h4>
 				
 				<div class="btn-group my-search-btn-group" >
-				  <button type="button" class="btn btn-primary my-search-btn-symptom" onclick="addFromResults('symptom1')">symptom1</button>
+				  <button type="button" class="btn btn-primary my-search-btn-symptom" >symptom1</button>
 				</div>
-				<div class="btn-group my-search-btn-group" onclick="addFromResults('symptom2')">
+				<div class="btn-group my-search-btn-group" >
 				  <button type="button" class="btn btn-primary my-search-btn-symptom">symptom2</button>
 				</div>
-				<div class="btn-group my-search-btn-group" onclick="addFromResults('symptom3')">
+				<div class="btn-group my-search-btn-group" >
 				  <button type="button" class="btn btn-primary my-search-btn-symptom">symptom3</button>
 				</div>
-				<div class="btn-group my-search-btn-group" onclick="addFromResults('symptom4')">
+				<div class="btn-group my-search-btn-group" >
 				  <button type="button" class="btn btn-primary my-search-btn-symptom">symptom4</button>
 				</div>
 				
@@ -189,7 +226,37 @@
 					xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxx
 					xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx......</p>
 			</div>
+			<div class="row" id="searchResults">
+			</div>
 		</div>
+
+		<script>
+		$(".my-search-btn-symptom").click(function(){
+			var symptom = this.innerHTML;
+			var newDiv = $('<div />',{
+				'class':"btn-group"
+			});
+			$(newDiv).css({
+				"margin":"10px"})
+			var btn1 = $('<button/>',{
+				'class': "btn btn-primary user-input"
+			});
+			$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+			$(btn1).appendTo(newDiv);
+			var btn2 = $('<button/>',{
+				'class': "btn btn-primary"
+			});
+			$(btn2).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+			var mySpan = $('<span/>',{
+				'class': "glyphicon glyphicon-remove"
+			}).appendTo(btn2);
+			$(btn2).appendTo(newDiv);
+			$(newDiv).appendTo("#tag-group")
+			$(btn2).click(function(){
+				$(this).parent().remove();
+			})
+		});
+		</script>
 		
 	</body>
 </html>
