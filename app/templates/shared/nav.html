@@ -8,18 +8,37 @@
             </div>
             <div>
                 <ul class="nav navbar-nav">
-                    <li><a href="/model" class="my-navbar-li">3D Human body</a></li>
-                    <li><a href="/category" class="my-navbar-li">Categorized A-Z</a></li>
+                    <li><a href="/model" id="nav-model" class="my-navbar-li">3D Human body</a></li>
+                    <li><a href="/category" id="nav-category" class="my-navbar-li">Categorized A-Z</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
                     <li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                    <li><a href="/search" class="my-navbar-active"><span
+                    <li><a href="/search" id="nav-search" class="my-navbar-li"><span
                             class="glyphicon glyphicon-search"></span> Search</a></li>
                 </ul>
             </div>
         </div>
     </nav>
+	
+	<script>
+		var path = window.location.pathname;
+		if( path == "/search"){
+			var target = document.getElementById('nav-search');
+			$(target).addClass("my-navbar-active");
+			$(target).removeClass("my-navbar-li");
+		}
+		else if(path == "/model"){
+			var target = document.getElementById('nav-model');
+			$(target).addClass("my-navbar-active");
+			$(target).removeClass("my-navbar-li");
+		}
+		else if(path == "/category"){
+			var target = document.getElementById('nav-category');
+			$(target).addClass("my-navbar-active");
+			$(target).removeClass("my-navbar-li");
+		}
+	</script>
 
     <div class="container-fluid my-jumbotron-container-adjust">
         <div class="jumbotron my-jumbotron ">
