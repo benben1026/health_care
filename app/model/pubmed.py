@@ -23,7 +23,10 @@ class PubmedGetter:
 		#text = self.textarea[0][self.textarea[0].index('>') + 1 : self.textarea[0].index('<') - 1]
 		#self.textarea = str(self.textarea[0])
 		text = self.textarea[self.textarea.index('>') + 1 : self.textarea.index('<') - 1]
-		text = text[0 : text.index('[MeSH Terms]')]
+		chopping = text.find('[MeSH Terms');
+		if chopping < 0:
+			return "[]"
+		text = text[0 : text.find('[MeSH Terms]')]
 		text = text[1 : text.index('"', 1)]
 
-		return text
+		return json.dumps(text.split(','))
