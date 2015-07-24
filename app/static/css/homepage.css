@@ -1,18 +1,18 @@
 @font-face {
  font-family: 'Helvetica Neue Light';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Lt.otf);
+  src: url(http://128.199.82.15:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Lt.otf);
 }
 @font-face {
  font-family: 'Helvetica Neue Light Extended';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-LtEx.otf);
+  src: url(http://128.199.82.15:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-LtEx.otf);
 }
 @font-face {
  font-family: 'Helvetica Neue Thin';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Th.otf);
+  src: url(http://128.199.82.15:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Th.otf);
 }
 @font-face {
  font-family: 'Helvetica Neue Thin Extended';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-ThEx.otf);
+  src: url(http://128.199.82.15:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-ThEx.otf);
 }
 
 .my-navbar-brand{
@@ -208,4 +208,10 @@
 .my-h3-disease{
 	color:rgb(212,96,93) !important;
 	font-family: 'Helvetica Neue Light Extended', Helvetica, Arial, sans-serif !important;
+}
+.my-frame{
+	width:400px;
+	height:400px;
+	overflow-y:hidden;
+	border:none;
 }
