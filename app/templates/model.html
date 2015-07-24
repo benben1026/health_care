@@ -1,0 +1,101 @@
+{% extends "shared/nav.html" %}
+
+{% block content %}
+<script> 
+$(document).ready(function(){
+	$("#flip").click(function(){
+		$("#panel").slideToggle("slow");
+	});
+	$("#genderSwitch").click(function(){
+	console.log("haha");
+		if($("#myFrame").attr("src").indexOf("testMale") >= 0 ){
+			$("#myFrame").attr("src","http://128.199.82.15:3000/testFemale");
+			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
+		}
+		else{
+			$("#myFrame").attr("src","http://128.199.82.15:3000/testMale");
+			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
+		}
+	})
+});
+</script>
+
+<nav class="navbar navbar-default my-navbar-cut">
+	<div class="container">
+		<div class="navbar-header">
+			<a class="navbar-brand my-navbar-brand" href="./homepage.html">CU Online Health Care Platform</a>
+		</div>
+		<div>
+			<ul class="nav navbar-nav">
+				<li><a href="./homepage.html" class="my-navbar-active">3D Human body</a></li>
+				<li><a href="./category.html" class="my-navbar-li">Categorized A-Z</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+				<li><a href="#" class="my-navbar-li"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+				<li><a href="./search.html" class="my-navbar-li"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<div class="container-fluid my-jumbotron-container-adjust">
+	<div class="jumbotron my-jumbotron ">
+		<div class="container">
+			<h1 class="my-jumbotron-h1">Getting started</h1>      
+			<p class="my-jumbotron-p">Your personal health care advicer.</p>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6">
+			<h1	class="my-h1-homepage">3D Human Body - Male</h1>
+		</div>
+		<div class="col-md-3">
+			<a  class="my-gender-switch" id="genderSwitch">change gender >></a>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-5">
+			<iframe  
+			id="myFrame" 
+			name="theFrame"
+			class="my-frame" 
+			style="display:hidden"
+			scrolling="no" 
+			seamless="seamless"
+			src="http://128.199.82.15:3000/testMale"></iframe>
+		</div>
+		<div>
+			<div class="col-md-3" >
+				<h2 class="my-second-select">Select an area</h2>
+				<div class="list-group">
+					<a class="list-group-item my-list-group-item">Breast</a>
+					<a class="list-group-item my-list-group-item ">Chest</a>
+					<a class="list-group-item my-list-group-item-active" id="flip">Heart£¨click here to see demo£©</a>
+					<a class="list-group-item my-list-group-item ">Lungs</a>
+					<a class="list-group-item my-list-group-item ">Upper back</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4" id="panel">
+			<h2 class="my-third-select">Select an specialiesd area</h2>
+			<div class="list-group">
+				<a href="#" class="list-group-item my-list-group-item">Angina</a>
+				<a href="#" class="list-group-item my-list-group-item ">Blood pressure</a>
+				<a href="#" class="list-group-item my-list-group-item ">Brugada</a>
+				<a href="#" class="list-group-item my-list-group-item-active ">Heart attack</a>
+				<a href="#" class="list-group-item my-list-group-item ">Heart block</a>
+				<a href="#" class="list-group-item my-list-group-item ">Pacemaker implantation </a>
+				<a href="#" class="list-group-item my-list-group-item ">Wolff-Parkinson-White syndrome</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

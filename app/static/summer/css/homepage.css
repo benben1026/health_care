@@ -1,18 +1,18 @@
 @font-face {
  font-family: 'Helvetica Neue Light';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Lt.otf);
+  src: url(http://localhost:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Lt.otf);
 }
 @font-face {
  font-family: 'Helvetica Neue Light Extended';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-LtEx.otf);
+  src: url(http://localhost:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-LtEx.otf);
 }
 @font-face {
  font-family: 'Helvetica Neue Thin';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Th.otf);
+  src: url(http://localhost:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-Th.otf);
 }
 @font-face {
  font-family: 'Helvetica Neue Thin Extended';
-  src: url(http://54.169.142.43/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-ThEx.otf);
+  src: url(http://localhost:3000/static/bootstrap-3.3.4-dist/fonts/HelveticaNeueLTPro-ThEx.otf);
 }
 
 .my-navbar-brand{
@@ -158,6 +158,7 @@
 	background-color:rgb(68,0,98) !important;
 	color:rgb(255,255,255) !important;
 	border:1px solid rgb(68,0,98) !important;
+	width:80px !important;
 }
 .my-search-btn-add:hover{
 	background-color:rgb(212,96,93) !important;
@@ -166,11 +167,6 @@
 }
 .my-search-disease-match1{
 	padding-right:0px !important;
-	font-family:  Helvetica, Arial, sans-serif !important;
-	color:rgb(68,0,98) !important;
-}
-.my-search-disease-match2{
-	padding-left:0px !important;
 	font-family:  Helvetica, Arial, sans-serif !important;
 	color:rgb(68,0,98) !important;
 }
