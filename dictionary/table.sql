@@ -3,52 +3,51 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `healthcare` /*!40100 DEFAULT CHARACTER
 USE `healthcare`;
 
 --
--- Table structure for table `Body_Broad_Classification`
+-- Table structure for table `Body_Level1`
 --
 
-DROP TABLE IF EXISTS `Body_Broad_Classification`;
+DROP TABLE IF EXISTS `Body_Level1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Body_Broad_Classification` (
-  `body_part_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Body_Level1` (
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`body_part_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Body_Broad_Classification`
+-- Dumping data for table `Body_Level1`
 --
 
-LOCK TABLES `Body_Broad_Classification` WRITE;
-/*!40000 ALTER TABLE `Body_Broad_Classification` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Body_Broad_Classification` ENABLE KEYS */;
+LOCK TABLES `Body_Level1` WRITE;
+/*!40000 ALTER TABLE `Body_Level1` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Body_Level1` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `Body_Detailed_Classification`
+-- Table structure for table `Body_Level2`
 --
 
-DROP TABLE IF EXISTS `Body_Detailed_Classification`;
+DROP TABLE IF EXISTS `Body_Level2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Body_Detailed_Classification` (
-  `body_part_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Body_Level2` (
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  `broad_classification_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`body_part_id`),
-  KEY `broad_classification_id` (`broad_classification_id`),
-  CONSTRAINT `Body_Detailed_Classification_ibfk_1` FOREIGN KEY (`broad_classification_id`) REFERENCES `Body_Broad_Classification` (`body_part_id`) ON DELETE CASCADE
+  `upper_level_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`upper_level_id`) REFERENCES `Body_Level1` (`id`) ON DELETE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Body_Detailed_Classification`
+-- Dumping data for table `Body_Level2`
 --
 
-LOCK TABLES `Body_Detailed_Classification` WRITE;
-/*!40000 ALTER TABLE `Body_Detailed_Classification` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Body_Detailed_Classification` ENABLE KEYS */;
+LOCK TABLES `Body_Level2` WRITE;
+/*!40000 ALTER TABLE `Body_Level2` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Body_Level2` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -67,7 +66,12 @@ CREATE TABLE `Disease` (
   `description` text,
   `possible complications` text,
   `exams and tests` text,
-  PRIMARY KEY (`disease_id`)
+  `gender` tinyint,
+  `body_part_1` smallint unsigned,
+  `body_part_2` smallint unsigned,
+  PRIMARY KEY (`disease_id`),
+  FOREIGN KEY (`body_part_1`) REFERENCES `Body_Level1`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`body_part_2`) REFERENCES `Body_Level2`(`id`) ON DELETE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -170,14 +174,8 @@ DROP TABLE IF EXISTS `Symptom`;
 CREATE TABLE `Symptom` (
   `symptom_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `symptom_name` text NOT NULL,
-  `body_parts_1` int(11) DEFAULT NULL,
-  `body_parts_2` int(11) DEFAULT NULL,
   `symptom_type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`symptom_id`),
-  KEY `body_parts_1` (`body_parts_1`),
-  KEY `body_parts_2` (`body_parts_2`),
-  CONSTRAINT `Symptom_ibfk_1` FOREIGN KEY (`body_parts_1`) REFERENCES `Body_Broad_Classification` (`body_part_id`) ON DELETE CASCADE,
-  CONSTRAINT `Symptom_ibfk_2` FOREIGN KEY (`body_parts_2`) REFERENCES `Body_Detailed_Classification` (`body_part_id`) ON DELETE CASCADE
+  PRIMARY KEY (`symptom_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 ALTER TABLE Symptom ADD FULLTEXT INDEX `FullText` (`symptom_name` ASC);
