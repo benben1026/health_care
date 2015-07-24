@@ -1,5 +1,5 @@
 from structure import *
-#from pubmed import *
+from pubmed import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_fulltext import FullTextSearch, FullTextMode
