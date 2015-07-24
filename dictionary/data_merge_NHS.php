@@ -5,9 +5,9 @@
 
 	//$filename = "NHS/testnhs";
 	$filename = "NHS/NHS_DB.data";
-	$host = "localhost";
+	$host = "128.199.82.15";
 	$username = "healthcare";
-	$password = "hvVZVuRbSZjdREZ6";
+	$password = "sf4e5UcjjFhy8u2z";
 	$database = "healthcare";
 
 	$link = new mysqli($host, $username, $password, $database);
@@ -59,16 +59,16 @@
 		$attribute_list["description"] = "";
 		$attribute_list["possible complications"] = "";
 		$attribute_list["exams and tests"] = "";
-		$gender = 3; //1->male, 2->female, 3->both
+		$gender = "both"; //ENUM(male, female, both)
 		foreach($data as $key => $value){
 			if(strrpos(strtolower($key), "symptom") > -1){
 				//echo "enter symptom";
 				insert_symptom($value, $disease_id);
 			}else if(strrpos(strtolower($key), "gender") > -1){
 				if(!isset($value->Male))
-					$gender = 2;
+					$gender = "female";
 				if(!isset($value->Female))
-					$gender = 1;
+					$gender = "male";
 			}else if(strrpos(strtolower($key), "position") > -1 && isset($value->level1) && isset($value->level2)){
 				//echo "value = " . $value[""];
 				//echo "level 1 = " . $value["level1"] . "; level 2 = " . $value["level2"] . "\n";
@@ -86,7 +86,7 @@
 			}
 		}
 
-		$stmt_update_attribute->bind_param("ssssssii", $attribute_list["treatment"], $attribute_list["causes"], $attribute_list["prevention"], $attribute_list["description"], $attribute_list["possible complications"], $attribute_list["exams and tests"], $gender, $disease_id);
+		$stmt_update_attribute->bind_param("sssssssi", $attribute_list["treatment"], $attribute_list["causes"], $attribute_list["prevention"], $attribute_list["description"], $attribute_list["possible complications"], $attribute_list["exams and tests"], $gender, $disease_id);
 		if(!$stmt_update_attribute->execute()){
 			echo "Fail to update attribute:" . $stmt_update_attribute->error . "\n";
 		}

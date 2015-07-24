@@ -66,7 +66,7 @@ CREATE TABLE `Disease` (
   `description` text,
   `possible complications` text,
   `exams and tests` text,
-  `gender` tinyint,
+  `gender` enum('male', 'female', 'both'),
   `body_part_1` smallint unsigned,
   `body_part_2` smallint unsigned,
   PRIMARY KEY (`disease_id`),
