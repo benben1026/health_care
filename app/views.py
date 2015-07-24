@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, send_from_directory
 from app import app
 from model import *
 import json
@@ -25,6 +25,13 @@ def search():
 @app.route('/model')
 def model():
     return render_template('model.html')
+
+@app.route('/doc/<file_name>')
+def document(file_name):
+    import os
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "doc")
+    return send_from_directory(path, file_name)
+
 
 
 # ------------------------------------- Ajax API ------------------------------------------#
