@@ -15,12 +15,18 @@ class BodyLevel1(Base):
     id = Column(SmallInteger, primary_key=True, autoincrement=True)
     name = Column(String(255))
 
+    def to_dict(self):
+        return {"id": self.id, "name": self.name}
+
 class BodyLevel2(Base):
     __tablename__ = "Body_Level2"
     id = Column(SmallInteger, primary_key=True, autoincrement=True)
     name = Column(String(255))
     upper_level_id = Column(Integer, ForeignKey('Body_Level1.id'))
     upper_level = relationship("BodyLevel1")
+
+    def to_dict(self):
+        return {"id": self.id, "name": self.name, "upper_level": self.upper_level.to_dict()}
 
 class Disease(Base):
     __tablename__ = "Disease"
