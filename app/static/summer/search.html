@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="../bootstrap-3.3.4-dist/css/bootstrap.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="http://54.169.142.43/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="../css/homepage.css">
+		<link rel="stylesheet" href="./css/homepage.css">
 		
 		<script>
 			function add(){
@@ -86,13 +86,15 @@
 							var divDisplay = document.getElementById("searchResults")
 							var str = "";
 							for (var diseaseId in data){
-								str += "<h2 class='col-md-12'><a class='my-search-disease-name'>";
+								str += "<div class='col-md-12'><h2 class='col-md-12'><a class='my-search-disease-name'>";
 								str += data[diseaseId]["name"];
 								str += "</a></h2>";
-								str += "<h4 class='col-md-2 my-search-disease-match1'>";
-								str += "Its symptoms:";
-								str += "</h4>";
 
+								str += "<h3 class='col-md-12 my-search-disease-match1' style='margin-top:0px !important; '>";
+								str += data[diseaseId]["description"];
+								str += "</h3><h4 class='col-md-12 my-search-disease-match1'>Symptoms:</h4></div>";
+								
+								
 								//wait until the ajax data was sent back
 								$.ajax({
 									url:'/api/diseases/'+diseaseId,
@@ -100,21 +102,18 @@
 									dataType:'json',
 									async: false,
 									success:function(data){
-										console.log("gg");
+										str += "<div class='col-md-12'><div class='list-group'>"
 										for(var i = 0; i < data.symptoms.length; i++){
-											str += "<div class='btn-group my-search-btn-group' ><button type='button' class='btn btn-primary my-search-btn-symptom' >";
+											str += "<a href='#' class='list-group-item my-search-result-symptom'><span class='glyphicon glyphicon-plus'></span>";
 											str += data.symptoms[i].name;
-											str += "</button></div>";
+											str += "</a>";
 										}
+										str += "</div></div>"
 									},
 									error:function(){
 										alert('Failed to get data.');
 									}
 								})
-								console.log("hh");
-								str += "<p class='col-md-12'>";
-								str += data[diseaseId]["description"];
-								str += "</p>";
 							}
 							divDisplay.innerHTML = str;
 						},
@@ -167,6 +166,20 @@
 		
 		<div class="container">
 			<div class="row">
+				<div class="col-md-12">
+					<h1	class="my-h1-homepage" style="margin-bottom:15px !important;">How to start search</h1>
+					<p>1. Type in a symptom in the input box and press <code>Add it</code> to add a keyword tag. One symptom each time.</p>
+					<p>2. After type in all your symptoms, press <code>Search</code>.</p>
+					<p>3. The searching results may remind you some symptoms and you can click them to add them as a keyword tag.</p>
+					<p>4. Then, press the <code>Search</code> and you will have a more specific search.</p>
+				</div>
+				
+			</div>
+		</div>
+		
+		<div class="container">
+			<hr>
+			<div class="row">
 				<div class="col-md-8">
 					<h1	class="my-h1-homepage">Type in your symptoms here</h1>
 				</div>
@@ -180,7 +193,7 @@
 					<input class="form-control" id="inputSymptom" type="text" placeholder="Type in a symptom">
 				</div>
 				<div class="col-md-1">
-					<button type="button" class="btn btn-default my-search-btn-add" onclick="add()">Add it</button>
+					<button type="button" class="btn btn-default my-search-btn-add" onclick="add()" >Add it</button>
 				</div>
 				<div class="col-md-1">
 					<button type="button" class="btn btn-default my-search-btn-add" onclick="search()">Search</button>
@@ -197,41 +210,39 @@
 		</div>
 		
 		<div class="container">
-			<div class="col-md-12">
-				<h1	class="my-h1-search">Searching Results</h1>
+			<hr>
+			<div class="col-md-12" style="padding:0px !important; ">
+				<h1	class="my-h1-search" style="margin-top:0px !important;">Searching Results</h1>
 			</div>
+		</div>
+		
+		<div class="container">
 			<div class="row">
-				
-				<h2 class="col-md-12"><a class="my-search-disease-name">Disease A</a></h2>
-				
-				<h4 class="col-md-2 my-search-disease-match1">Matched Disease:</h4>
-				<h4 class="col-md-10 my-search-disease-match2">3</h4>
-				<h4 class="col-md-2 my-search-disease-match1">Its symptoms:</h4>
-				
-				<div class="btn-group my-search-btn-group" >
-				  <button type="button" class="btn btn-primary my-search-btn-symptom" >symptom1</button>
-				</div>
-				<div class="btn-group my-search-btn-group" >
-				  <button type="button" class="btn btn-primary my-search-btn-symptom">symptom2</button>
-				</div>
-				<div class="btn-group my-search-btn-group" >
-				  <button type="button" class="btn btn-primary my-search-btn-symptom">symptom3</button>
-				</div>
-				<div class="btn-group my-search-btn-group" >
-				  <button type="button" class="btn btn-primary my-search-btn-symptom">symptom4</button>
+				<div class="col-md-12">
+					<h2 class="col-md-12"><a class="my-search-disease-name">Disease A</a></h2>
+					
+					<h3 class="col-md-12 my-search-disease-match1" style="margin-top:0px !important; ">xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx 
+						xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx......</h3>
+					<h4 class="col-md-12 my-search-disease-match1">Symptoms:</h4>
+					
 				</div>
 				
-				<p class="col-md-12">
-					Disease A is a xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx 
-					xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxx
-					xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx xxxxx......</p>
+				<div class="col-md-12">
+					<div class="list-group">
+					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus"></span>First item</a>
+					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus"></span>Second item</a>
+					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus"></span>Third item</a>
+					</div>
+				</div>
+				
 			</div>
+			
 			<div class="row" id="searchResults">
 			</div>
 		</div>
 
 		<script>
-		$(".my-search-btn-symptom").click(function(){
+		$(".my-search-result-symptom").click(function(){
 			var symptom = this.innerHTML;
 			var newDiv = $('<div />',{
 				'class':"btn-group"
