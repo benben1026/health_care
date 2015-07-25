@@ -100,31 +100,40 @@ def symptom_match():
     if request.method == "POST":
         match_list = request.get_json()
         fulltext_limit = None
-        if match_list:
-            match_list[0] = "+"+match_list[0]
-            fulltext_limit = " +".join(match_list)
-        if fulltext_limit:
+        if not match_list:
+            return "No content"
+
+        diseases_matched_count = {}
+        keyword_length = len(match_list)
+        for keyword in match_list:
             symptoms_matched = []
             symptoms_matched_result = session.query(Symptom.symptom_id)\
-                .filter(FullTextSearch(fulltext_limit, Symptom, FullTextMode.BOOLEAN)).all()
+                .filter(FullTextSearch(keyword, Symptom)).all()
             for symptom_result_tuple in symptoms_matched_result:
                 symptoms_matched.append(symptom_result_tuple[0])
-            diseases_matched = session.query(DiseaseHasSymptom.disease_id, func.count(DiseaseHasSymptom.symptom_id).label("rel"))\
+            diseases_matched = session.query(DiseaseHasSymptom.disease_id)\
                 .filter(DiseaseHasSymptom.symptom_id.in_(symptoms_matched)).group_by(DiseaseHasSymptom.disease_id)\
-                .order_by(desc("rel")).all()
-            diseases_list = {}
-            diseases_limit = []
-
+                .all()
             for diseases_matched_tuple in diseases_matched:
-                diseases_limit.append(diseases_matched_tuple[0])
-                diseases_list[diseases_matched_tuple[0]] = {"relevance": diseases_matched_tuple[1]}
-            diseases_detail = session.query(Disease.disease_id, Disease.disease_name, Disease.description)\
-                .filter(Disease.disease_id.in_(diseases_limit)).all()
-            for disease_detail in diseases_detail:
-                cur = diseases_list[disease_detail[0]]
-                cur["name"] = disease_detail[1]
-                cur["description"] = disease_detail[2]
-            return json.dumps(diseases_list)
+                disease_id = diseases_matched_tuple[0]
+                if disease_id in diseases_matched_count:
+                    diseases_matched_count[disease_id] += 1
+                else:
+                    diseases_matched_count[disease_id] = 1
+        # Determine how relevant diseases will be returned
+        relevant_factor = 0.5
+        relevant_min = keyword_length * relevant_factor
+        diseases_matched_result = []
+        for disease_id in diseases_matched_count:
+            if diseases_matched_count[disease_id] > relevant_min:
+                diseases_matched_result.append(disease_id)
+        # Get description of theses diseases
+        diseases_matched_result_tuples = session.query(Disease.disease_id, Disease.disease_name, Disease.description).\
+            filter(Disease.disease_id.in_(diseases_matched_result)).all()
+        rv = []
+        for disease_tuple in diseases_matched_result_tuples:
+            rv.append({"id": disease_tuple[0], "name": disease_tuple[1], "description": disease_tuple[2], "relevance": diseases_matched_count[disease_tuple[0]]})
+        return json.dumps(rv)
 
 @app.route('/api/service/search-synonym/<query>')
 def search_synonym(query):
