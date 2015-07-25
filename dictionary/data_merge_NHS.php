@@ -29,7 +29,8 @@
 		$file = fopen($filename, "r");
 		$content = json_decode(fread($file, filesize($filename)));
 		fclose($file);
-		echo "Total Disease = " . count($content) . "\n";
+		//echo "Total Disease = " . count($content) . "\n";
+		echo "Start...\n";
 		$i = 0;
 		foreach($content as $name => $disease){
 			$stmt_insert_disease->bind_param("s", $name);
@@ -49,6 +50,7 @@
 		mysqli_stmt_close($stmt_search_symptom);
 		mysqli_stmt_close($stmt_insert_relationship);
 		mysqli_close($link);
+		echo "Finish\n";
 	}
 
 	function insert_attr($data, $disease_id){
@@ -139,7 +141,7 @@
 		global $link;
 
 		$stmt_search_position1 = $link->prepare("SELECT id FROM Body_Level1 WHERE name=?");
-		$stmt_search_position2 = $link->prepare("SELECT id FROM Body_Level2 WHERE id=? AND name=?");
+		$stmt_search_position2 = $link->prepare("SELECT id FROM Body_Level2 WHERE upper_level_id=? AND name=?");
 		$stmt_insert_position1 = $link->prepare("INSERT INTO Body_Level1(`name`) VALUES(?)");
 		$stmt_insert_position2 = $link->prepare("INSERT INTO Body_Level2(`name`, `upper_level_id`) VALUES(?, ?)");
 
