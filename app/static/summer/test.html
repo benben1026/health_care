@@ -14,23 +14,7 @@
 <script>
 
 function test(){
-	var tmp = "{'level':'leg,'level2':'xxx'}"
-	var jsonString = "Leg";
-	jsonString = JSON.stringify(jsonString); 
-	
-	$.ajax({
-		url:'/api/position/level1/Leg',
-		type:'GET',
-		dataType: 'json',
-		contentType: 'application/json',
-		success:function(data){
-			console.log("haha");
-			console.log(data);
-		},
-		error:function(){
-			alert('Failed to get data.');
-		}
-	})
+
 }
 
 test();

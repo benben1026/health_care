@@ -56,28 +56,31 @@
 						contentType: 'application/json',
 						data: jsonString,
 						success:function(data){
-							console.log(data);
+							console.log(data.length);
 							var divDisplay = document.getElementById("searchResults");
 							var str = "";
-							for (var diseaseId in data){
-								str += "<div class='col-md-12'><h2 class='col-md-12'><a class='my-search-disease-name'>";
-								str += data[diseaseId]["name"];
+							for(var i = 0; i < data.length; i++){
+								str += "<div class='col-md-12'><h2 class='col-md-12'><a class='my-search-disease-name'";
+								str += "href='/disease/";
+								str += data[i]["id"];
+								str += "'>"
+								str += data[i]["name"];
 								str += "</a></h2>";
-
+								
 								str += "<h3 class='col-md-12 my-search-disease-match1' style='margin-top:0px !important; '>";
-								str += data[diseaseId]["description"];
+								str += data[i]["description"];
 								str += "</h3><h4 class='col-md-12 my-search-disease-match1'>Symptoms:</h4></div>";
 								
 								//wait until the ajax data was sent back
 								$.ajax({
-									url:'/api/diseases/'+diseaseId,
+									url:'/api/diseases/'+data[i]["id"],
 									type:'GET',
 									dataType:'json',
 									async: false,
 									success:function(data){
 										str += "<div class='col-md-12'><div class='list-group'>"
 										for(var i = 0; i < data.symptoms.length; i++){
-											str += "<a href='#' class='list-group-item my-search-result-symptom'><span class='glyphicon glyphicon-plus'></span>";
+											str += "<a href='#' class='list-group-item my-search-result-symptom' onclick='addResult(this)'><span class='glyphicon glyphicon-plus'></span>";
 											str += data.symptoms[i].name;
 											str += "</a>";
 										}
@@ -202,8 +205,8 @@
 				
 				<div class="col-md-12">
 					<div class="list-group">
-					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus"></span>First item</a>
-					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus"></span>Second item</a>
+					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus" onclick='addResult(this)'></span>First item</a>
+					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus"onclick='addResult(this)'></span>Second item</a>
 					  <a href="#" class="list-group-item my-search-result-symptom"><span class="glyphicon glyphicon-plus"></span>Third item</a>
 					</div>
 				</div>
@@ -215,6 +218,32 @@
 		</div>
 
 		<script>
+		function addResult(temp){
+			var symptom = temp.innerHTML;
+			var newDiv = $('<div />',{
+				'class':"btn-group"
+			});
+			$(newDiv).css({
+				"margin":"10px"})
+			var btn1 = $('<button/>',{
+				'class': "btn btn-primary user-input"
+			});
+			$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+			$(btn1).appendTo(newDiv);
+			var btn2 = $('<button/>',{
+				'class': "btn btn-primary"
+			});
+			$(btn2).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+			var mySpan = $('<span/>',{
+				'class': "glyphicon glyphicon-remove"
+			}).appendTo(btn2);
+			$(btn2).appendTo(newDiv);
+			$(newDiv).appendTo("#tag-group")
+			$(btn2).click(function(){
+				$(temp).parent().remove();
+			})
+		}
+		/*
 		$(".my-search-result-symptom").click(function(){
 			var symptom = this.innerHTML;
 			var newDiv = $('<div />',{
@@ -240,6 +269,7 @@
 				$(this).parent().remove();
 			})
 		});
+		*/
 		</script>
 		
 	</body>
