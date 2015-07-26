@@ -15,7 +15,10 @@
                     <h3 class="my-h3-disease">Introduction</h3>
                 </div>
                 <div class="col-md-12">
-                    <p>{{ disease.description }}</p>
+                    {% for sub_title in disease.description %}
+                        <h4>{{ sub_title }}</h4>
+                        <p>{{ disease.description[sub_title] }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
 
@@ -24,26 +27,34 @@
                     <h3 class="my-h3-disease">Symptoms</h3>
                 </div>
                 <div class="col-md-12">
-                    {% for symptom in disease.symptoms %}
-                        <li>{{ symptom.name }}</li>
-                    {% endfor %}
+                    <ul>
+                        {% for symptom in disease.symptoms %}
+                            <li>{{ symptom.name }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             {% endif %}
             {% if disease.causes %}
                 <div class="col-md-12">
-                    <h3 class="my-h3-disease">What causes a {{ disease.name }}?</h3>
+                    <h3 class="my-h3-disease">Causes</h3>
                 </div>
                 <div class="col-md-12">
-                    <p>{{ disease.causes }}</p>
+                    {% for sub_title in disease.causes %}
+                        <h4>{{ sub_title }}</h4>
+                        <p>{{ disease.causes[sub_title] }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
 
             {% if disease.treatment %}
                 <div class="col-md-12">
-                    <h3 class="my-h3-disease">Treatement</h3>
+                        <h3 class="my-h3-disease">Treatement</h3>
                 </div>
                 <div class="col-md-12">
-                    <p>{{ disease.treatment }}</p>
+                    {% for sub_title in disease.treatment %}
+                        <h4>{{ sub_title }}</h4>
+                        <p>{{ disease.treatment[sub_title] }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
 
@@ -52,7 +63,10 @@
                     <h3 class="my-h3-disease">Prevention</h3>
                 </div>
                 <div class="col-md-12">
-                    <p>{{ disease.prevention }}</p>
+                    {% for sub_title in disease.prevention %}
+                        <h4>{{ sub_title }}</h4>
+                        <p>{{ disease.prevention[sub_title] }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
 
@@ -61,16 +75,22 @@
                     <h3 class="my-h3-disease">Possible Complications</h3>
                 </div>
                 <div class="col-md-12">
-                    <p>{{ disease.possible_complications }}</p>
+                    {% for sub_title in disease.possible_complications %}
+                        <h4>{{ sub_title }}</h4>
+                        <p>{{ disease.possible_complications[sub_title] }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
 
             {% if disease.exams_and_tests %}
                 <div class="col-md-12">
-                    <h3 class="my-h3-disease">Exams and Tests</h3>
+                    <h3 class="my-h3-disease">Exam and Tests</h3>
                 </div>
                 <div class="col-md-12">
-                    <p>{{ disease.exams_and_tests }}</p>
+                    {% for sub_title in disease.exams_and_tests %}
+                        <h4>{{ sub_title }}</h4>
+                        <p>{{ disease.exams_and_tests[sub_title] }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
         </div>

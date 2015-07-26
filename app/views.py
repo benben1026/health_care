@@ -14,7 +14,7 @@ def disease_entry(disease_id):
 
     session = Session()
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first().to_dict()
-    return render_template('disease.html', disease = disease)
+    return render_template('disease.html', disease=disease)
 @app.route('/category')
 def disease_category():
     return render_template('category.html')
@@ -39,8 +39,9 @@ def document(file_name):
     return send_from_directory(path, file_name)
 
 
-
 # ------------------------------------- Ajax API ------------------------------------------#
+
+
 @app.route('/api/diseases', methods=['GET', 'POST'])
 def get_diseases_list():
 
@@ -63,6 +64,7 @@ def get_diseases_list():
             rv[disease.disease_id] = disease.to_dict()
         return json.dumps(rv)
 
+
 @app.route('/api/diseases/position', methods=["POST"])
 def query_by_position():
     query = request.get_json()
@@ -82,10 +84,10 @@ def query_by_position():
 
 @app.route('/api/diseases/<disease_id>')
 def get_disease_detail(disease_id):
-
     session = Session()
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first()
     return json.dumps(disease.to_dict())
+
 
 @app.route('/api/position/level1/<level1_pos>')
 def query_level1(level1_pos):
@@ -96,7 +98,6 @@ def query_level1(level1_pos):
     level1_id = level1_id[0]
     level2s = session.query(BodyLevel2.id, BodyLevel2.name).filter(BodyLevel2.upper_level_id == level1_id).all()
     return json.dumps(level2s)
-
 
 
 @app.route('/api/service/symptom-match', methods=['POST'])
@@ -143,6 +144,7 @@ def symptom_match():
                        "description": retrieve_subtitle(disease_tuple[2])["Description"],
                        "relevance": diseases_matched_count[disease_tuple[0]]})
         return json.dumps(rv)
+
 
 @app.route('/api/service/search-synonym/<query>')
 def search_synonym(query):

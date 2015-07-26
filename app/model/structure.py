@@ -2,13 +2,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, Text, BigInteger, ForeignKey, Enum, SmallInteger
 from sqlalchemy.orm import relationship
 from sqlalchemy_fulltext import FullText, FullTextSearch
+from ..helper import retrieve_subtitle
 
 Base = declarative_base()
+
 
 class DiseaseHasSymptom(Base):
     __tablename__ = "Disease_Has_Symptom"
     disease_id = Column(Integer, ForeignKey('Disease.disease_id'), primary_key=True)
     symptom_id = Column(BigInteger, ForeignKey('Symptom.symptom_id'), primary_key=True)
+
 
 class BodyLevel1(Base):
     __tablename__ = "Body_Level1"
@@ -17,6 +20,7 @@ class BodyLevel1(Base):
 
     def to_dict(self):
         return {"id": self.id, "name": self.name}
+
 
 class BodyLevel2(Base):
     __tablename__ = "Body_Level2"
@@ -27,6 +31,7 @@ class BodyLevel2(Base):
 
     def to_dict(self):
         return {"id": self.id, "name": self.name, "upper_level": self.upper_level.to_dict()}
+
 
 class Disease(Base):
     __tablename__ = "Disease"
@@ -53,13 +58,14 @@ class Disease(Base):
         
         return {"id": self.disease_id,
                 "name": self.disease_name,
-                "treatment": self.treatment,
-                "causes": self.causes,
-                "prevention": self.prevention,
-                "description": self.description,
-                "possible_complications": self.possible_complications,
-                "exams_and_tests": self.exams_and_tests,
+                "treatment": retrieve_subtitle(self.treatment),
+                "causes": retrieve_subtitle(self.causes),
+                "prevention": retrieve_subtitle(self.prevention),
+                "description": retrieve_subtitle(self.description),
+                "possible_complications": retrieve_subtitle(self.possible_complications),
+                "exams_and_tests": retrieve_subtitle(self.exams_and_tests),
                 "symptoms": symptoms_obj}
+
 
 class Symptom(Base, FullText):
     __tablename__ = "Symptom"
