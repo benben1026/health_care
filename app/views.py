@@ -101,7 +101,7 @@ def query_level1(level1_pos):
 
 @app.route('/api/service/symptom-match', methods=['POST'])
 def symptom_match():
-    from sqlalchemy import func, desc
+    from helper import retrieve_subtitle
     session = Session()
     if request.method == "POST":
         match_list = request.get_json()
@@ -138,7 +138,10 @@ def symptom_match():
             filter(Disease.disease_id.in_(diseases_matched_result)).all()
         rv = []
         for disease_tuple in diseases_matched_result_tuples:
-            rv.append({"id": disease_tuple[0], "name": disease_tuple[1], "description": disease_tuple[2], "relevance": diseases_matched_count[disease_tuple[0]]})
+            rv.append({"id": disease_tuple[0],
+                       "name": disease_tuple[1],
+                       "description": retrieve_subtitle(disease_tuple[2])["Description"],
+                       "relevance": diseases_matched_count[disease_tuple[0]]})
         return json.dumps(rv)
 
 @app.route('/api/service/search-synonym/<query>')
