@@ -40,33 +40,7 @@
 				}
 				
 			}
-			/*
-			function addFromResults(){
-				var symptom = this.innerHTML;
-				var newDiv = $('<div />',{
-					'class':"btn-group"
-				});
-				$(newDiv).css({
-					"margin":"10px"})
-				var btn1 = $('<button/>',{
-					'class': "btn btn-primary user-input"
-				});
-				$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
-				$(btn1).appendTo(newDiv);
-				var btn2 = $('<button/>',{
-					'class': "btn btn-primary"
-				});
-				$(btn2).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
-				var mySpan = $('<span/>',{
-					'class': "glyphicon glyphicon-remove"
-				}).appendTo(btn2);
-				$(btn2).appendTo(newDiv);
-				$(newDiv).appendTo("#tag-group")
-				$(btn2).click(function(){
-					$(this).parent().remove();
-				})
-			}
-			*/
+			
 			function search(){
 				var userInputs = $("button").filter(".user-input");
 				if( userInputs.length > 0){
@@ -83,7 +57,7 @@
 						data: jsonString,
 						success:function(data){
 							console.log(data);
-							var divDisplay = document.getElementById("searchResults")
+							var divDisplay = document.getElementById("searchResults");
 							var str = "";
 							for (var diseaseId in data){
 								str += "<div class='col-md-12'><h2 class='col-md-12'><a class='my-search-disease-name'>";
@@ -94,7 +68,6 @@
 								str += data[diseaseId]["description"];
 								str += "</h3><h4 class='col-md-12 my-search-disease-match1'>Symptoms:</h4></div>";
 								
-								console.log("haha2");
 								//wait until the ajax data was sent back
 								$.ajax({
 									url:'/api/diseases/'+diseaseId,

@@ -25,6 +25,12 @@ def search():
 @app.route('/model')
 def model():
     return render_template('model.html')
+@app.route('/testMale')
+def testMale():
+    return render_template('testMale.html')
+@app.route('/testFemale')
+def testFemale():
+    return render_template('testFemale.html')
 
 @app.route('/doc/<file_name>')
 def document(file_name):

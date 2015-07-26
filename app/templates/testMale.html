@@ -8,8 +8,8 @@
 
 <style>
   body {
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
   }
 </style>
 
@@ -17,15 +17,15 @@
 
   
 <body>
-<script src="./js/three.min.js"></script>
-<script src="./js/Detector.js"></script>
-<script src="./js/stats.min.js"></script>
-<script src="./js/OrbitControls.js"></script>
-<script src="./js/JSONLoader.js"></script>
-<script src="./js/Projector.js"></script>
-<script src="./js/THREEx.KeyboardState.js"></script>
-<script src="./js/THREEx.FullScreen.js"></script>
-<script src="./js/THREEx.WindowResize.js"></script>
+<script src="static/summer/js/three.min.js"></script>
+<script src="static/summer/js/Detector.js"></script>
+<script src="static/summer/js/stats.min.js"></script>
+<script src="static/summer/js/OrbitControls.js"></script>
+<script src="static/summer/js/JSONLoader.js"></script>
+<script src="static/summer/js/Projector.js"></script>
+<script src="static/summer/js/THREEx.KeyboardState.js"></script>
+<script src="static/summer/js/THREEx.FullScreen.js"></script>
+<script src="static/summer/js/THREEx.WindowResize.js"></script>
 
 <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
 <script>
@@ -45,8 +45,7 @@ var hoverMaterial = new THREE.MeshPhongMaterial( {
 } ) 
 var tmpMaterial;
 //json file names
-var namesOrder = 0;
-var jsonNames = ['legs','head','left','right','maleBody','eyes'];
+var jsonNames = ['Leg','Head','Arm','Abdomen','Arm','Chest'];
 
 // standard global variables
 var container, scene, camera, renderer, controls, stats;
@@ -134,12 +133,12 @@ function init()
 	//   and increase values in model's exported .js file
 	//    to e.g. "colorAmbient" : [0.75, 0.75, 0.75]
 	var jsonLoader = new THREE.JSONLoader();
-	jsonLoader.load( "jsonModel/legs.json", addModelToScene );
-	jsonLoader.load( "jsonModel/head.json", addModelToScene );
-	jsonLoader.load( "jsonModel/left.json", addModelToScene );
-	jsonLoader.load( "jsonModel/right.json", addModelToScene );
-	jsonLoader.load( "jsonModel/maleBody.json", addModelToScene );
-	jsonLoader.load( "jsonModel/eyes.json", addModelToScene );
+	jsonLoader.load( "static/summer/jsonModel/legs.json", addModelToScene );
+	jsonLoader.load( "static/summer/jsonModel/head.json", addModelToScene1 );
+	jsonLoader.load( "static/summer/jsonModel/left.json", addModelToScene2 );
+	jsonLoader.load( "static/summer/jsonModel/abdomen.json", addModelToScene3 );
+	jsonLoader.load( "static/summer/jsonModel/right.json", addModelToScene4 );
+	jsonLoader.load( "static/summer/jsonModel/chest.json", addModelToScene5 );
 	// addModelToScene function is called back after model has loaded
 	
 	
@@ -159,11 +158,54 @@ function addModelToScene( geometry, materials )
 {
 	var material = new THREE.MeshFaceMaterial( materials );
 	var tmp = new THREE.Mesh( geometry, material );
-	tmp.name = jsonNames[namesOrder];
-	namesOrder++;
+	tmp.name = jsonNames[0];
 	tmp.scale.set(100,100,100);
 	tmp.position.set(0,-100,-50);
-	console.log(tmp);
+	scene.add( tmp );
+}
+function addModelToScene1( geometry, materials ) 
+{
+	var material = new THREE.MeshFaceMaterial( materials );
+	var tmp = new THREE.Mesh( geometry, material );
+	tmp.name = jsonNames[1];
+	tmp.scale.set(100,100,100);
+	tmp.position.set(0,-100,-50);
+	scene.add( tmp );
+}
+function addModelToScene2( geometry, materials ) 
+{
+	var material = new THREE.MeshFaceMaterial( materials );
+	var tmp = new THREE.Mesh( geometry, material );
+	tmp.name = jsonNames[2];
+	tmp.scale.set(100,100,100);
+	tmp.position.set(0,-100,-50);
+	scene.add( tmp );
+}
+function addModelToScene3( geometry, materials ) 
+{
+	var material = new THREE.MeshFaceMaterial( materials );
+	var tmp = new THREE.Mesh( geometry, material );
+	tmp.name = jsonNames[3];
+	tmp.scale.set(100,100,100);
+	tmp.position.set(0,-100,-50);
+	scene.add( tmp );
+}
+function addModelToScene4( geometry, materials ) 
+{
+	var material = new THREE.MeshFaceMaterial( materials );
+	var tmp = new THREE.Mesh( geometry, material );
+	tmp.name = jsonNames[4];
+	tmp.scale.set(100,100,100);
+	tmp.position.set(0,-100,-50);
+	scene.add( tmp );
+}
+function addModelToScene5( geometry, materials ) 
+{
+	var material = new THREE.MeshFaceMaterial( materials );
+	var tmp = new THREE.Mesh( geometry, material );
+	tmp.name = jsonNames[5];
+	tmp.scale.set(100,100,100);
+	tmp.position.set(0,-100,-50);
 	scene.add( tmp );
 }
 
@@ -172,8 +214,6 @@ function onDocumentMouseDown( event ) {
 	// the following line would stop any other event handler from firing
 	// (such as the mouse's TrackballControls)
 	// event.preventDefault();
-	
-	console.log("Click.");
 	
 	// update the mouse variable
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -193,7 +233,8 @@ function onDocumentMouseDown( event ) {
 	// if there is one (or more) intersections
 	if ( intersects2.length > 0 )
 	{
-		console.log( intersects2[0].object );
+		var position = intersects2[0].object.name
+		parent.postMessage(position,"http://localhost:3000/model");  
 	}
 }
 

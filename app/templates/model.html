@@ -3,17 +3,14 @@
 {% block content %}
 <script> 
 $(document).ready(function(){
-	$("#flip").click(function(){
-		$("#panel").slideToggle("slow");
-	});
 	$("#genderSwitch").click(function(){
 	console.log("haha");
 		if($("#myFrame").attr("src").indexOf("testMale") >= 0 ){
-			$("#myFrame").attr("src","http://128.199.82.15:3000/testFemale");
+			$("#myFrame").attr("src","http://localhost:3000/testFemale");
 			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
 		}
 		else{
-			$("#myFrame").attr("src","http://128.199.82.15:3000/testMale");
+			$("#myFrame").attr("src","http://localhost:3000/testMale");
 			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
 		}
 	})
@@ -31,13 +28,22 @@ function get_position_lev1(level1){
 				alert(data["Err"]);
 				return;
 			}
-			console.log(data);
+			var targetDiv = document.getElementById('selectLev');
+			var str = "";
+			for(var i = 0; i < data.length; i++){
+				str += "<a class='list-group-item my-list-group-item flip' onclick='getLev2(this)'>";
+				str += data[i][1];
+				str += "</a>";
+			}
+			targetDiv.innerHTML = str;
 		},
 		error:function(){
 
 		}
 	});
 }
+
+var firstVisit ="0";
 
 function get_position(level1, level2){
 	if(level1 == "" || level2 == "")
@@ -53,19 +59,34 @@ function get_position(level1, level2){
 				alert(data["Err"]);
 				return;
 			}
-			console.log(data);
+			var targetDiv = document.getElementById('selectLev2');
+			var str = "";
+			if(firstVisit == "1"){
+				$("#panel").slideToggle("slow");
+			}
+			firstVisit = "1";
+			for(var i = 0; i < data.length; i++){
+				str += "<a class='list-group-item my-list-group-item' ";
+				str += "href='/disease/";
+				str += data[i][0];
+				str += "'>";
+				str += data[i][1];
+				str += "</a>";
+			}
+			targetDiv.innerHTML = str;
 		},
 		error:function(){
 
 		}
 	});
 }
+
 </script>
 
 <div class="container">
 	<div class="row">
 		<div class="col-md-6">
-			<h1	class="my-h1-homepage">3D Human Body - Male</h1>
+			<h1	class="my-h1-homepage">3D Human Body</h1>
 		</div>
 		<div class="col-md-3">
 			<a  class="my-gender-switch" id="genderSwitch">change gender >></a>
@@ -83,33 +104,75 @@ function get_position(level1, level2){
 			style="display:hidden"
 			scrolling="no" 
 			seamless="seamless"
-			src="http://128.199.82.15:3000/testMale"></iframe>
+			src="http://localhost:3000/testMale"></iframe>
 		</div>
 		<div>
 			<div class="col-md-3" >
 				<h2 class="my-second-select">Select an area</h2>
-				<div class="list-group">
-					<a class="list-group-item my-list-group-item">Breast</a>
-					<a class="list-group-item my-list-group-item ">Chest</a>
-					<a class="list-group-item my-list-group-item-active" id="flip">Heart click here to see demo</a>
-					<a class="list-group-item my-list-group-item ">Lungs</a>
-					<a class="list-group-item my-list-group-item ">Upper back</a>
+				<div class="list-group" id="selectLev">
+					
 				</div>
 			</div>
 		</div>
 		<div class="col-md-4" id="panel">
 			<h2 class="my-third-select">Select an specialiesd area</h2>
-			<div class="list-group">
+			<div class="list-group" id="selectLev2">
+			<!--
 				<a href="#" class="list-group-item my-list-group-item">Angina</a>
 				<a href="#" class="list-group-item my-list-group-item ">Blood pressure</a>
 				<a href="#" class="list-group-item my-list-group-item ">Brugada</a>
-				<a href="#" class="list-group-item my-list-group-item-active ">Heart attack</a>
+				<a href="#" class="list-group-item my-list-group-item ">Heart attack</a>
 				<a href="#" class="list-group-item my-list-group-item ">Heart block</a>
 				<a href="#" class="list-group-item my-list-group-item ">Pacemaker implantation </a>
 				<a href="#" class="list-group-item my-list-group-item ">Wolff-Parkinson-White syndrome</a>
+				-->
 			</div>
 		</div>
 	</div>
 </div>
+
+<script>
+//global variable
+var position_level1;
+var position_level2;
+var last_level1_highlight;
+var target_disease_id;
+
+//default select level1
+var default_lev1 = "chest";
+//var default_lev2 = "Lungs";
+position_level1 = default_lev1;
+get_position_lev1(default_lev1);
+//get_position(default_lev1,default_lev2);
+
+var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+var eventer = window[eventMethod];
+var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+// Listen to message from child window
+eventer(messageEvent,function(e) {
+	var key = e.message ? "message" : "data";
+    var data = e[key];
+	position_level1 = data;
+	get_position_lev1(data);
+	if( firstVisit == "1"){
+		firstVisit = "0";
+		$("#panel").slideToggle("slow");
+	}
+},false);
+
+function getLev2(temp){
+	$(temp).removeClass('my-list-group-item');
+	$(temp).addClass('my-list-group-item-active');
+	$(last_level1_highlight).addClass('my-list-group-item');
+	$(last_level1_highlight).removeClass('my-list-group-item-active');
+	last_level1_highlight = temp;
+	position_level2 = temp.innerHTML;
+	get_position(position_level1,position_level2);
+	$("#panel").slideToggle("slow");
+}
+
+
+</script>
 
 {% endblock %}
