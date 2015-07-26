@@ -1,213 +1,43 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-    <style>
-      body {
-        margin: 0px;
-        padding: 0px;
-      }
-    </style>
+<head>
+	<title>Online Health Care Platform</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="../bootstrap-3.3.4-dist/css/bootstrap.css">
+	<link rel="stylesheet" href="../css/homepage.css">
 	
+</head>
 	
-	
+<body>
+<script>
 
-  </head>
-  <body>
+function test(){
+	var tmp = "{'level':'leg,'level2':'xxx'}"
+	var jsonString = "Leg";
+	jsonString = JSON.stringify(jsonString); 
 	
-	<!-- Load the Paper.js library -->
-	<script type="text/javascript" src="./js/paper.js"></script>
-	<!-- Define inlined PaperScript associate it with myCanvas -->
-	<script type="text/paperscript" canvas="myCanvas">
-		
-		var frontHead = drawFrontHead();
-		var frontBody = drawFrontBody();
-		var frontLeg = drawFrontLeg();
-		var frontLeftArm = drawFrontLeftArm();
-		var frontRightArm = drawFrontRightArm();
-		
-		
-		function enter(event) {
-			this.fillColor = 'rgba(122,122,122,0.5)';
+	$.ajax({
+		url:'/api/position/level1/Leg',
+		type:'GET',
+		dataType: 'json',
+		contentType: 'application/json',
+		success:function(data){
+			console.log("haha");
+			console.log(data);
+		},
+		error:function(){
+			alert('Failed to get data.');
 		}
-		function leave(event) {
-			this.fillColor = 'rgba(122,122,122,0)';
-		}
-	
-		function drawFrontHead(){
-			var path = new Path();
-			//path.strokeColor = 'rgba(122,122,122,0.5)';
-			path.add(new Point(118, 75)); 
-			path.add(new Point(118, 20)); 
-			path.add(new Point(157, 20));
-			path.add(new Point(157, 75));
-			path.closed = true;
-			path.fillColor = 'rgba(122,122,122,0)';
-			path.onMouseEnter = enter;
-			path.onMouseLeave = leave;
+	})
+}
 
-			// Select the path, so we can see its handles:
-			//path.fullySelected = true;
+test();
 
-			// Smooth the segments of the copy:
-			path.smooth();
-			return path;
-		}
-		function drawFrontBody(){
-			var path = new Path();
-			//path.strokeColor = 'rgba(122,122,122,0.5)';
-			path.add(new Point(88, 135));
-			path.add(new Point(85, 111));			
-			path.add(new Point(118, 90)); 
-			path.add(new Point(135, 85));
-			path.add(new Point(157, 90));
-			path.add(new Point(187, 111));
-			path.add(new Point(187, 135));
-			path.add(new Point(182, 185));
-			path.add(new Point(179, 243));
-			path.add(new Point(183, 269));
-			path.add(new Point(136, 270));
-			path.add(new Point(90, 269));
-			path.add(new Point(94, 243));
-			path.add(new Point(90, 185));
-			path.closed = true;
-			path.fillColor = 'rgba(122,122,122,0)';
-			path.onMouseEnter = enter;
-			path.onMouseLeave = leave;
+</script>
 
-			// Select the path, so we can see its handles:
-			//path.fullySelected = true;
-			
-			// Smooth the segments of the copy:
-			path.smooth();
-			return path;
-		}
-		function drawFrontLeg(){
-			var path = new Path();
-			//path.strokeColor = 'rgba(122,122,122,0.5)';
-			path.add(new Point(135, 274)); 
-			path.add(new Point(176, 269)); 
-			path.add(new Point(188, 283)); 
-			path.add(new Point(192, 348));
-			path.add(new Point(183, 415));
-			path.add(new Point(185, 460));
-			path.add(new Point(170, 530));
-			path.add(new Point(178, 567));
-			
-			path.add(new Point(156, 568));
-			path.add(new Point(151, 543));
-			path.add(new Point(155, 525));
-			path.add(new Point(151, 472));
-			path.add(new Point(156, 434));
-			path.add(new Point(141, 343));
-			
-			path.add(new Point(135, 313));
 
-			path.add(new Point(132, 343)); 
-			path.add(new Point(119, 434)); 
-			path.add(new Point(124, 472)); 
-			path.add(new Point(120, 525)); 
-			path.add(new Point(122, 543)); 
-			path.add(new Point(121, 568)); 
-			
-			path.add(new Point(96, 567)); 
-			path.add(new Point(101, 530)); 
-			path.add(new Point(87, 460)); 
-			path.add(new Point(92, 415)); 
-			path.add(new Point(82, 348)); 
-			path.add(new Point(86, 283));
-			path.add(new Point(96, 269));
-			path.closed = true;
-			path.fillColor = 'rgba(122,122,122,0)';
-			path.onMouseEnter = enter;
-			path.onMouseLeave = leave;
+</body>
 
-			// Select the path, so we can see its handles:
-			// path.fullySelected = true;
-
-			// Smooth the segments of the copy:
-			path.smooth();
-			return path;
-		}
-		function drawFrontLeftArm(){
-			var path = new Path();
-			path.add(new Point(195, 109)); 
-			path.add(new Point(214, 128)); 
-			path.add(new Point(220, 200));
-			path.add(new Point(226, 232));
-			
-			path.add(new Point(226, 282)); 
-			path.add(new Point(231, 293));
-			path.add(new Point(237, 310)); 
-			path.add(new Point(232, 330));
-			path.add(new Point(210, 326));
-			
-			path.add(new Point(208, 298)); 
-			path.add(new Point(210, 281));
-			path.add(new Point(199, 240));
-			
-			path.add(new Point(199, 218)); 
-			path.add(new Point(190, 173)); 
-			path.add(new Point(191, 137));
-			
-			path.closed = true;
-			path.fillColor = 'rgba(122,122,122,0)';
-			
-			path.onMouseEnter = enter;
-			path.onMouseLeave = leave;
-
-			// Select the path, so we can see its handles:
-			//path.fullySelected = true;
-
-			// Smooth the segments of the copy:
-			path.smooth();
-			return path;
-		}
-		function drawFrontRightArm(){
-			var path = new Path();
-			path.add(new Point(76, 109)); 
-			path.add(new Point(59, 128)); 
-			path.add(new Point(53, 200));
-			path.add(new Point(47, 232));
-			
-			path.add(new Point(48, 282)); 
-			path.add(new Point(42, 293));
-			path.add(new Point(35, 310)); 
-			path.add(new Point(42, 330));
-			path.add(new Point(65, 326));
-			
-			path.add(new Point(66, 298)); 
-			path.add(new Point(64, 281));
-			path.add(new Point(75, 240));
-			
-			path.add(new Point(77, 218)); 
-			path.add(new Point(83, 173)); 
-			path.add(new Point(84, 137));
-			
-			path.closed = true;
-			path.fillColor = 'rgba(122,122,122,0)';
-			
-			path.onMouseEnter = enter;
-			path.onMouseLeave = leave;
-
-			// Select the path, so we can see its handles:
-			//path.fullySelected = true;
-
-			// Smooth the segments of the copy:
-			path.smooth();
-			return path;
-		}
-		
-	</script>
-	
-	<div style="position:absolute; top:0px; left:0px">
-		<img src="./images/front.png" id="frontBody" style="position:absolute; top:0px; left:0px; z-index:-1">
-		<canvas id="myCanvas" width="270" height="580"></canvas>
-	</div>
-	
-	
-
-	
-
-	
-  </body>
 </html>  

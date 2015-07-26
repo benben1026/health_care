@@ -82,7 +82,7 @@
 						contentType: 'application/json',
 						data: jsonString,
 						success:function(data){
-							
+							console.log(data);
 							var divDisplay = document.getElementById("searchResults")
 							var str = "";
 							for (var diseaseId in data){
@@ -94,7 +94,7 @@
 								str += data[diseaseId]["description"];
 								str += "</h3><h4 class='col-md-12 my-search-disease-match1'>Symptoms:</h4></div>";
 								
-								
+								console.log("haha2");
 								//wait until the ajax data was sent back
 								$.ajax({
 									url:'/api/diseases/'+diseaseId,
@@ -108,7 +108,7 @@
 											str += data.symptoms[i].name;
 											str += "</a>";
 										}
-										str += "</div></div>"
+										str += "</div></div>";
 									},
 									error:function(){
 										alert('Failed to get data.');
