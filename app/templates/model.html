@@ -4,13 +4,12 @@
 <script> 
 $(document).ready(function(){
 	$("#genderSwitch").click(function(){
-	console.log("haha");
 		if($("#myFrame").attr("src").indexOf("testMale") >= 0 ){
-			$("#myFrame").attr("src","http://localhost:3000/testFemale");
+			$("#myFrame").attr("src","/static/summer/testFemale.html");
 			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
 		}
 		else{
-			$("#myFrame").attr("src","http://localhost:3000/testMale");
+			$("#myFrame").attr("src","/static/summer/testMale.html");
 			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
 		}
 	})
@@ -104,7 +103,7 @@ function get_position(level1, level2){
 			style="display:hidden"
 			scrolling="no" 
 			seamless="seamless"
-			src="http://localhost:3000/testMale"></iframe>
+			src="/static/summer/testMale.html"></iframe>
 		</div>
 		<div>
 			<div class="col-md-3" >

@@ -17,15 +17,15 @@
 
   
 <body>
-<script src="static/summer/js/three.min.js"></script>
-<script src="static/summer/js/Detector.js"></script>
-<script src="static/summer/js/stats.min.js"></script>
-<script src="static/summer/js/OrbitControls.js"></script>
-<script src="static/summer/js/JSONLoader.js"></script>
-<script src="static/summer/js/Projector.js"></script>
-<script src="static/summer/js/THREEx.KeyboardState.js"></script>
-<script src="static/summer/js/THREEx.FullScreen.js"></script>
-<script src="static/summer/js/THREEx.WindowResize.js"></script>
+<script src="./js/three.min.js"></script>
+<script src="./js/Detector.js"></script>
+<script src="./js/stats.min.js"></script>
+<script src="./js/OrbitControls.js"></script>
+<script src="./js/JSONLoader.js"></script>
+<script src="./js/Projector.js"></script>
+<script src="./js/THREEx.KeyboardState.js"></script>
+<script src="./js/THREEx.FullScreen.js"></script>
+<script src="./js/THREEx.WindowResize.js"></script>
 
 <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
 <script>
@@ -133,12 +133,12 @@ function init()
 	//   and increase values in model's exported .js file
 	//    to e.g. "colorAmbient" : [0.75, 0.75, 0.75]
 	var jsonLoader = new THREE.JSONLoader();
-	jsonLoader.load( "static/summer/jsonModel/legs.json", addModelToScene );
-	jsonLoader.load( "static/summer/jsonModel/head.json", addModelToScene1 );
-	jsonLoader.load( "static/summer/jsonModel/left.json", addModelToScene2 );
-	jsonLoader.load( "static/summer/jsonModel/abdomen.json", addModelToScene3 );
-	jsonLoader.load( "static/summer/jsonModel/right.json", addModelToScene4 );
-	jsonLoader.load( "static/summer/jsonModel/chest.json", addModelToScene5 );
+	jsonLoader.load( "./jsonModel/legs.json", addModelToScene );
+	jsonLoader.load( "./jsonModel/head.json", addModelToScene1 );
+	jsonLoader.load( "./jsonModel/left.json", addModelToScene2 );
+	jsonLoader.load( "./jsonModel/abdomen.json", addModelToScene3 );
+	jsonLoader.load( "./jsonModel/right.json", addModelToScene4 );
+	jsonLoader.load( "./jsonModel/chest.json", addModelToScene5 );
 	// addModelToScene function is called back after model has loaded
 	
 	
@@ -215,8 +215,6 @@ function onDocumentMouseDown( event ) {
 	// (such as the mouse's TrackballControls)
 	// event.preventDefault();
 	
-	console.log("Click.");
-	
 	// update the mouse variable
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -235,7 +233,8 @@ function onDocumentMouseDown( event ) {
 	// if there is one (or more) intersections
 	if ( intersects2.length > 0 )
 	{
-		console.log( intersects2[0].object );
+		var position = intersects2[0].object.name
+		parent.postMessage(position,"http://localhost:3000/model");  
 	}
 }
 
