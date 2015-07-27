@@ -200,6 +200,119 @@
         }
       }
     },
+    "/api/session": {
+      "post": {
+        "description": "Register a session",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authentication",
+            "in": "body",
+            "description": "Email and password",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserAuth"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error if exists",
+            "schema": {
+              "$ref": "#/definitions/Err",
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a session",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Error if exists",
+            "schema": {
+              "$ref": "#/definitions/Err",
+            }
+          }
+        }
+      },
+    },
+    "/api/user": {
+      "get": {
+        "description": "Return cuurent session information",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "reponse the current user information",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserClient"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create an user account",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "body",
+            "description": "Account information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserReg"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error if exists",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Err"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{email}": {
+      "get": {
+        "description": "Check whether an email already exists",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "Email address",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Whether an eamil already exists",
+            "schema": {
+              "$ref": "#/definitions/UserExist"
+            }
+          }
+        }
+      }
+    },
   },
   "definitions": {
     "Symptom": {
@@ -289,6 +402,113 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "UserFull": {
+      "type": "object",
+      "required": [
+        "id",
+        "password",
+        "email"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female"]
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "UserAuth": {
+      "type": "object",
+      "required": [
+        "password",
+        "email"
+      ],
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "UserReg": {
+      "type": "object",
+      "required": [
+        "password",
+        "email"
+      ],
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female"]
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "UserClient": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female"]
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "UserExist": {
+      "type": "object",
+      "required" :[
+        "exist"
+      ],
+      "properties":{
+        "exist": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Err": {
+      "type": "object",
+      "required": [
+        "Err"
+      ],
+      "properties": {
+        "Err": {
+          "type": ["string", "null"]
         }
       }
     }
