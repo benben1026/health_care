@@ -104,9 +104,9 @@
                 data: jsonString,
                 success: function (data) {
                     var divDisplay = document.getElementById("searchResults");
-                    var str = "";
+                    var str = "", diseaseQueue = [];
                     for (var index in data) {
-                        disease_queue.push(data[index]["id"]);
+                        diseaseQueue.push(data[index]["id"]);
                         str += "<h2 class='col-md-12'><a class='my-search-disease-name'>";
                         str += data[index]["name"];
                         str += "</a></h2>";
@@ -141,7 +141,7 @@
                     }
                     divDisplay.innerHTML = str;
                     endLoading();
-                    getDiseasesDetail();
+                    getDiseasesDetail(diseaseQueue);
                 },
                 error: function () {
                     alert('Fail to get search result.');
@@ -211,24 +211,23 @@
             search();
         }
 
-        function getDiseasesDetail() {
-            if (disease_queue.length == 0) {
-                setTimeout(getDiseasesDetail, 1000);
-            } else {
-                $.ajax({
-                    url: '/api/diseases/' + disease_queue.shift(),
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        symptom_list(data);
-                        getDiseasesDetail();
-                    },
-                    error: function () {
-                        console.log('Fail to get symptoms list');
-                        //alert('Failed to get data.');
+        function getDiseasesDetail(diseaseQueue) {
+            $.ajax({
+                url: '/api/diseases',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(diseaseQueue),
+                success: function (data) {
+                    for (var diseaseId in data) {
+                        symptom_list(data[diseaseId]);
                     }
-                })
-            }
+                },
+                error: function () {
+                    console.log('Fail to get symptoms list');
+                    //alert('Failed to get data.');
+                }
+            })
         }
     </script>
 
