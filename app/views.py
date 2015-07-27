@@ -1,4 +1,5 @@
 from flask import render_template, request, send_from_directory, session
+from sqlalchemy import distinct
 from app import app
 from model import *
 import json, copy
@@ -114,7 +115,7 @@ def query_by_position():
     query = request.get_json()
     if not query["level1"] or not query["level2"]:
         return json.dumps({"Err": "Level1 and Level2 position required"})
-    
+
     level1_id = db_session.query(BodyLevel1.id).filter(BodyLevel1.name == query["level1"]).first()[0]
     level2_id = db_session.query(BodyLevel2.id).filter(BodyLevel2.name == query["level2"]).first()[0]
     if not level1_id or not level2_id:
@@ -129,7 +130,7 @@ def query_by_position():
 
 @app.route('/api/diseases/<disease_id>')
 def get_disease_detail(disease_id):
-    
+
     disease = db_session.query(Disease).filter(Disease.disease_id == disease_id).first()
     rv = disease.to_dict()
     db_session.close()
@@ -138,7 +139,7 @@ def get_disease_detail(disease_id):
 
 @app.route('/api/position/level1/<level1_pos>')
 def query_level1(level1_pos):
-    
+
     level1_id = db_session.query(BodyLevel1.id).filter(BodyLevel1.name == level1_pos).first()
     if not level1_id:
         return json.dumps({"Err": "Incorrect Level1 keyword"})
@@ -151,7 +152,7 @@ def query_level1(level1_pos):
 @app.route('/api/service/symptom-match', methods=['POST'])
 def symptom_match():
     from helper import retrieve_subtitle
-    
+
     if request.method == "POST":
         match_list = request.get_json()
         fulltext_limit = None
@@ -161,13 +162,14 @@ def symptom_match():
         diseases_matched_count = {}
         keyword_length = len(match_list)
         for keyword in match_list:
-            symptoms_matched = []
-            symptoms_matched_result = db_session.query(Symptom.symptom_id)\
-                .filter(FullTextSearch(keyword, Symptom)).all()
-            for symptom_result_tuple in symptoms_matched_result:
-                symptoms_matched.append(symptom_result_tuple[0])
-            diseases_matched = db_session.query(DiseaseHasSymptom.disease_id)\
-                .filter(DiseaseHasSymptom.symptom_id.in_(symptoms_matched)).group_by(DiseaseHasSymptom.disease_id)\
+            symptoms_matched = set()
+            for synonym in keyword:
+                symptoms_matched_result = db_session.query(Symptom.symptom_id)\
+                    .filter(FullTextSearch(synonym, Symptom)).all()
+                for symptom_result_tuple in symptoms_matched_result:
+                    symptoms_matched.add(symptom_result_tuple[0])
+            diseases_matched = db_session.query(distinct(DiseaseHasSymptom.disease_id))\
+                .filter(DiseaseHasSymptom.symptom_id.in_(symptoms_matched))\
                 .all()
             for diseases_matched_tuple in diseases_matched:
                 disease_id = diseases_matched_tuple[0]
@@ -197,7 +199,7 @@ def symptom_match():
 
 @app.route('/api/service/search-synonym/<query>')
 def search_synonym(query):
-    
+
     p = PubmedGetter(query)
     p.send()
     db_session.close()
