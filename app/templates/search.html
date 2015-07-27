@@ -2,40 +2,43 @@
 
 {% block content %}
 <script>
-	function add(){
-			
-		var symptom = document.getElementById("inputSymptom");
-		if(symptom.value.trim() != ""){
-			symptom = symptom.value.trim();
-			var newDiv = $('<div />',{
-				'class':"btn-group"
-			});
-			$(newDiv).css({
-				"margin":"10px"})
-			var btn1 = $('<button/>',{
-				'class': "btn btn-primary user-input"
-			});
-			$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
-			$(btn1).appendTo(newDiv);
-			var btn2 = $('<button/>',{
-				'class': "btn btn-primary"
-			});
-			$(btn2).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
-			var mySpan = $('<span/>',{
-				'class': "glyphicon glyphicon-remove"
-			}).appendTo(btn2);
-			$(btn2).appendTo(newDiv);
-			$(newDiv).appendTo("#tag-group")
-			$(btn2).click(function(){
-				$(this).parent().remove();
-			})
-			$('#inputSymptom').val('');
-		}
+var disease_queue = [];
+function add(){
 		
+	var symptom = document.getElementById("inputSymptom");
+	if(symptom.value.trim() != ""){
+		symptom = symptom.value.trim();
+		var newDiv = $('<div />',{
+			'class':"btn-group"
+		});
+		$(newDiv).css({
+			"margin":"10px"})
+		var btn1 = $('<button/>',{
+			'class': "btn btn-primary user-input"
+		});
+		$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+		$(btn1).appendTo(newDiv);
+		var btn2 = $('<button/>',{
+			'class': "btn btn-primary"
+		});
+		$(btn2).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+		var mySpan = $('<span/>',{
+			'class': "glyphicon glyphicon-remove"
+		}).appendTo(btn2);
+		$(btn2).appendTo(newDiv);
+		$(newDiv).appendTo("#tag-group")
+		$(btn2).click(function(){
+			$(this).parent().remove();
+		})
+		$('#inputSymptom').val('');
 	}
+	
+}
 function search(){
 	var userInputs = $("button").filter(".user-input");
 	if( userInputs.length > 0){
+		startloading();
+		disease_queue = [];
 		var temp = [];
 		for(var i = 0; i < userInputs.length; i++){
 			temp[i] = userInputs[i].innerHTML;
@@ -51,49 +54,138 @@ function search(){
 				
 				var divDisplay = document.getElementById("searchResults")
 				var str = "";
-				for (var diseaseId in data){
+				for (var index in data){
+					disease_queue.push(data[index]["id"]);
 					str += "<h2 class='col-md-12'><a class='my-search-disease-name'>";
-					str += data[diseaseId]["name"];
+					str += data[index]["name"];
 					str += "</a></h2>";
-					str += "<h4 class='col-md-2 my-search-disease-match1'>";
-					str += "Its symptoms:";
-					str += "</h4>";
+					str += "<h4 class='col-md-2 my-search-disease-match1'>Its symptoms:</h4>";
+					str += "<div id=\"symptoms-loading" + data[index]["id"] + "\"><img src=\"/static/loading.gif\" style=\"width:30px; height:30px;\"></div>";
+					//str += "<div id=\"symptoms-list" + data[index]["id"] + "\" class='btn-group my-search-btn-group' ></div>";
 
+					str += '<div class="dropdown dropdown-list-' + data[index]["id"] + '" style="display:none;"><button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Symptom List<span class="caret"></span></button><ul class="dropdown-menu symptom-list-' + data[index]["id"] + '" aria-labelledby="dropdownMenu1"></ul></div>';
 					//wait until the ajax data was sent back
-					$.ajax({
-						url:'/api/diseases/'+diseaseId,
-						type:'GET',
-						dataType:'json',
-						async: false,
-						success:function(data){
-							for(var i = 0; i < data.symptoms.length; i++){
-								str += "<div class='btn-group my-search-btn-group' ><button type='button' class='btn btn-primary my-search-btn-symptom' >";
-								str += data.symptoms[i].name;
-								str += "</button></div>";
-							}
-						},
-						error:function(){
-							alert('Failed to get data.');
-						}
-					})
+					// $.ajax({
+					// 	url:'/api/diseases/' + data[index]["id"],
+					// 	type:'GET',
+					// 	dataType:'json',
+					// 	//async: false,
+					// 	success:function(data){
+					// 		var temp = data;
+					// 		symptom_list(temp);
+					// 		// for(var i = 0; i < data.symptoms.length; i++){
+					// 		// 	str += "<div class='btn-group my-search-btn-group' ><button type='button' class='btn btn-primary my-search-btn-symptom' >";
+					// 		// 	str += data.symptoms[i].name;
+					// 		// 	str += "</button></div>";
+					// 		// }
+					// 	},
+					// 	error:function(){
+					// 		console.log('Fail to get symptoms list');
+					// 		//alert('Failed to get data.');
+					// 	}
+					// })
 					str += "<p class='col-md-12'>";
-					str += data[diseaseId]["description"];
+					str += data[index]["description"];
 					str += "</p>";
 				}
 				divDisplay.innerHTML = str;
+				endloading();
+				get_symptom_list();
 			},
 			error:function(){
-				alert('Failed to get data.');
+				alert('Fail to get search result.');
+				$('.loading').hide();
+				$('.result').hide();
+				$('#search-btn').prop('disabled', false);
 			}
 		})
 	}
 }
-$(document).ready(function(){
-	
-})	
+
+function symptom_list(data){
+	for(var i in data.symptoms){
+		$('ul.symptom-list-' + data.id).append('<li><a class="list-group-item my-search-result-symptom" onclick="addResult(this)"><span class="glyphicon glyphicon-plus"></span>' + data.symptoms[i].name + '</a></li>');
+	}
+	$('#symptoms-loading' + data.id).hide();
+	$('div.dropdown-list-' + data.id).show();
+}
+
+function startloading(){
+	$('.loading').show();
+	$('.result').hide();
+	$('#search-btn').prop('disabled');
+}
+
+function endloading(){
+	$('.loading').hide();
+	$('.result').show();
+	$('#search-btn').prop('disabled', false);
+}
+
+function addResult(temp){
+	var symptom = temp.innerHTML;
+	symptom = symptom.split("</span>");
+	symptom = symptom[1];
+	console.log(symptom);
+	var newDiv = $('<div />',{
+		'class':"btn-group"
+	});
+	$(newDiv).css({
+		"margin":"10px"})
+	var btn1 = $('<button/>',{
+		'class': "btn btn-primary user-input"
+	});
+	$(btn1).html(symptom).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+	$(btn1).appendTo(newDiv);
+	var btn2 = $('<button/>',{
+		'class': "btn btn-primary"
+	});
+	$(btn2).css({"color":"rgb(255,255,255)","background-color":"rgb(212,96,93)","border":"1px solid rgb(212,96,93)"});
+	var mySpan = $('<span/>',{
+		'class': "glyphicon glyphicon-remove"
+	}).appendTo(btn2);
+	$(btn2).appendTo(newDiv);
+	$(newDiv).appendTo("#tag-group")
+	$(btn2).click(function(){
+		$(temp).parent().remove();
+	})
+	search();
+}
+
+function get_symptom_list(){
+	if(disease_queue.length != 0){
+		$.ajax({
+			url:'/api/diseases/' + disease_queue.shift(),
+			type:'GET',
+			dataType:'json',
+			success:function(data){
+				var temp = data;
+				symptom_list(temp);
+				get_symptom_list();
+			},
+			error:function(){
+				console.log('Fail to get symptoms list');
+				//alert('Failed to get data.');
+			}
+		})
+	}else{
+		setTimeout(get_symptom_list, 1000);
+	}
+}
 </script>
 
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1	class="my-h1-homepage" style="margin-bottom:15px !important;">How to start search</h1>
+			<p>1. Type in a symptom in the input box and press <code>Add it</code> to add a keyword tag. One symptom each time.</p>
+			<p>2. After type in all your symptoms, press <code>Search</code>.</p>
+			<p>3. The searching results may remind you some symptoms and you can click them to add them as a keyword tag.</p>
+			<p>4. Then, press the <code>Search</code> and you will have a more specific search.</p>
+		</div>
 		
+	</div>
+</div>		
 <div class="container">
 	<div class="row">
 		<div class="col-md-8">
@@ -112,7 +204,7 @@ $(document).ready(function(){
 			<button type="button" class="btn btn-default my-search-btn-add" onclick="add()">Add it</button>
 		</div>
 		<div class="col-md-1">
-			<button type="button" class="btn btn-default my-search-btn-add" onclick="search()">Search</button>
+			<button type="button" id="search-btn" class="btn btn-default my-search-btn-add" onclick="search()">Search</button>
 		</div>
 		
 	</div>
@@ -125,7 +217,13 @@ $(document).ready(function(){
 	</div>
 </div>
 
-<div class="container">
+<div class="container loading" style="display:none">
+	<div id="loading">
+		<img src="/static/loading.gif" style="width:100px; height=100px;" />
+	</div>
+</div>
+
+<div class="container result" style="display:none">
 	<div class="col-md-12">
 		<h1	class="my-h1-search">Searching Results</h1>
 	</div>
