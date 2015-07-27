@@ -1,7 +1,7 @@
-from flask import render_template, request, send_from_directory
+from flask import render_template, request, send_from_directory, session
 from app import app
 from model import *
-import json
+import json, copy
 
 
 @app.route('/')
@@ -11,8 +11,8 @@ def index():
 
 @app.route('/disease/<disease_id>')
 def disease_entry(disease_id):
-    disease = session.query(Disease).filter(Disease.disease_id == disease_id).first().to_dict()
-    session.close()
+    disease = db_session.query(Disease).filter(Disease.disease_id == disease_id).first().to_dict()
+    db_session.close()
     return render_template('disease.html', disease=disease)
 @app.route('/category')
 def disease_category():
@@ -38,29 +38,74 @@ def document(file_name):
     return send_from_directory(path, file_name)
 
 
-# ------------------------------------- Ajax API ------------------------------------------#
+# ------------------------------------- User API ----------------------------------------------#
+@app.route('/api/user', methods=['POST', 'GET', 'PUT'])
+def add_user():
+    if request.method == "POST":
+        inf = request.get_json()
+        for field in User.required:
+            if not inf[field]:
+                return "Invalid"
+        new_user = User(inf["email"], inf["password"], gender=inf["gender"], age=inf["age"])
+        db_session.add(new_user)
+        db_session.commit()
+        db_session.close()
+        return json.dumps({"Err": None})
+    if request.method == "GET":
+        if "user" in session:
+            user_dict = copy.deepcopy(session["user"])
+            user_dict.pop("password", None)
+            user_dict.pop("id", None)
+            return json.dumps(user_dict)
+        else:
+            return json.dumps({"Err": "No session"})
 
+
+@app.route('/api/user/<email>')
+def check_exist(email):
+    return json.dumps({"exist": User.exist(db_session, email)})
+
+
+@app.route('/api/session', methods=['POST', 'DELETE'])
+def authentic():
+    if request.method == "POST":
+        inf = request.get_json()
+        if "email" not in inf or "password" not in inf:
+            return "Invalid"
+        authentic_user = User.authentic(db_session, inf["email"], inf["password"])
+        if not authentic_user:
+            return json.dumps({"Err": "Invalid email of password"})
+        session["user"] = authentic_user.to_dict()
+        return json.dumps({"Err": None})
+    if request.method == 'DELETE':
+        if "user" not in session:
+            return json.dumps({"Err": "Do not have a session"})
+        session.pop("user", None)
+        return json.dumps({"Err": None})
+
+
+# ------------------------------------- Diseases API ------------------------------------------#
 
 @app.route('/api/diseases', methods=['GET', 'POST'])
 def get_diseases_list():
     if request.method == "GET":
         limit = request.args.get('limit')
         offset = request.args.get('offset')
-        tmp_query = session.query(Disease.disease_id, Disease.disease_name).order_by(Disease.disease_name)
+        tmp_query = db_session.query(Disease.disease_id, Disease.disease_name).order_by(Disease.disease_name)
         if limit and str(limit).isdigit():
             tmp_query = tmp_query.limit(int(limit))
         if offset and str(offset).isdigit():
             tmp_query = tmp_query.offset(int(offset))
         result = tmp_query.all()
-        session.close()
+        db_session.close()
         return json.dumps(result)
     elif request.method == "POST":
         ids = request.get_json()
-        diseases = session.query(Disease).filter(Disease.disease_id.in_(ids)).all()
+        diseases = db_session.query(Disease).filter(Disease.disease_id.in_(ids)).all()
         rv = {}
         for disease in diseases:
             rv[disease.disease_id] = disease.to_dict()
-        session.close()
+        db_session.close()
         return json.dumps(rv)
 
 
@@ -70,36 +115,36 @@ def query_by_position():
     if not query["level1"] or not query["level2"]:
         return json.dumps({"Err": "Level1 and Level2 position required"})
     
-    level1_id = session.query(BodyLevel1.id).filter(BodyLevel1.name == query["level1"]).first()[0]
-    level2_id = session.query(BodyLevel2.id).filter(BodyLevel2.name == query["level2"]).first()[0]
+    level1_id = db_session.query(BodyLevel1.id).filter(BodyLevel1.name == query["level1"]).first()[0]
+    level2_id = db_session.query(BodyLevel2.id).filter(BodyLevel2.name == query["level2"]).first()[0]
     if not level1_id or not level2_id:
         return json.dumps({"Err": "Incorrect Level1 or Level2 keyword"})
-    diseases = session.query(Disease.disease_id, Disease.disease_name).filter(Disease.body_part_1 == level1_id, Disease.body_part_2 == level2_id).all()
+    diseases = db_session.query(Disease.disease_id, Disease.disease_name).filter(Disease.body_part_1 == level1_id, Disease.body_part_2 == level2_id).all()
     rv = []
     for disease in diseases:
         rv.append(disease)
-    session.close()
+    db_session.close()
     return json.dumps(rv)
 
 
 @app.route('/api/diseases/<disease_id>')
 def get_disease_detail(disease_id):
     
-    disease = session.query(Disease).filter(Disease.disease_id == disease_id).first()
+    disease = db_session.query(Disease).filter(Disease.disease_id == disease_id).first()
     rv = disease.to_dict()
-    session.close()
+    db_session.close()
     return json.dumps(rv)
 
 
 @app.route('/api/position/level1/<level1_pos>')
 def query_level1(level1_pos):
     
-    level1_id = session.query(BodyLevel1.id).filter(BodyLevel1.name == level1_pos).first()
+    level1_id = db_session.query(BodyLevel1.id).filter(BodyLevel1.name == level1_pos).first()
     if not level1_id:
         return json.dumps({"Err": "Incorrect Level1 keyword"})
     level1_id = level1_id[0]
-    level2s = session.query(BodyLevel2.id, BodyLevel2.name).filter(BodyLevel2.upper_level_id == level1_id).all()
-    session.close()
+    level2s = db_session.query(BodyLevel2.id, BodyLevel2.name).filter(BodyLevel2.upper_level_id == level1_id).all()
+    db_session.close()
     return json.dumps(level2s)
 
 
@@ -117,11 +162,11 @@ def symptom_match():
         keyword_length = len(match_list)
         for keyword in match_list:
             symptoms_matched = []
-            symptoms_matched_result = session.query(Symptom.symptom_id)\
+            symptoms_matched_result = db_session.query(Symptom.symptom_id)\
                 .filter(FullTextSearch(keyword, Symptom)).all()
             for symptom_result_tuple in symptoms_matched_result:
                 symptoms_matched.append(symptom_result_tuple[0])
-            diseases_matched = session.query(DiseaseHasSymptom.disease_id)\
+            diseases_matched = db_session.query(DiseaseHasSymptom.disease_id)\
                 .filter(DiseaseHasSymptom.symptom_id.in_(symptoms_matched)).group_by(DiseaseHasSymptom.disease_id)\
                 .all()
             for diseases_matched_tuple in diseases_matched:
@@ -138,7 +183,7 @@ def symptom_match():
             if diseases_matched_count[disease_id] > relevant_min:
                 diseases_matched_result.append(disease_id)
         # Get description of theses diseases
-        diseases_matched_result_tuples = session.query(Disease.disease_id, Disease.disease_name, Disease.description).\
+        diseases_matched_result_tuples = db_session.query(Disease.disease_id, Disease.disease_name, Disease.description).\
             filter(Disease.disease_id.in_(diseases_matched_result)).all()
         rv = []
         for disease_tuple in diseases_matched_result_tuples:
@@ -146,7 +191,7 @@ def symptom_match():
                        "name": disease_tuple[1],
                        "description": retrieve_subtitle(disease_tuple[2])["Description"],
                        "relevance": diseases_matched_count[disease_tuple[0]]})
-        session.close()
+        db_session.close()
         return json.dumps(rv)
 
 
@@ -155,7 +200,7 @@ def search_synonym(query):
     
     p = PubmedGetter(query)
     p.send()
-    session.close()
+    db_session.close()
     return p.extract()
 
 

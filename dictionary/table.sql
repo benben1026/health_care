@@ -197,13 +197,15 @@ DROP TABLE IF EXISTS `User`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `User` (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `email` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `email` varchar(50) UNIQUE NOT NULL,
+  `password` varchar(64) NOT NULL,
   `age` tinyint(4) DEFAULT NULL,
-  `gender` tinyint(4) DEFAULT NULL,
+  `gender` ENUM('male', 'female') DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+CREATE INDEX email_index ON User(email);
 
 --
 -- Dumping data for table `User`

@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, Text, BigInteger, ForeignKey, Enum, SmallInteger
 from sqlalchemy.orm import relationship
 from sqlalchemy_fulltext import FullText, FullTextSearch
-from ..helper import retrieve_subtitle
+from ..helper import retrieve_subtitle, password_hash
 
 Base = declarative_base()
 
@@ -78,3 +78,41 @@ class Symptom(Base, FullText):
         return {"id": self.symptom_id,
                 "name": self.symptom_name,
                 "type": self.symptom_type}
+
+
+class User(Base):
+    __tablename__ = "User"
+    user_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    email = Column(String(50), unique=True, nullable=False)
+    password = Column(String(64), nullable=False)
+    age = Column(SmallInteger)
+    gender = Column(Enum("male", "female"))
+
+    required = ["email", "password"]
+
+    def __init__(self, email, password, age=None, gender=None):
+        if not email or not password:
+            return
+        self.email = email
+        self.password = password_hash(password)
+        self.age = age
+        self.gender = gender
+
+    @classmethod
+    def authentic(cls, session, email, password):
+        hashed_password = password_hash(password)
+        user = session.query(cls).filter(cls.email == email, cls.password == hashed_password).first()
+        return user
+
+    @classmethod
+    def exist(cls, session, email):
+        user = session.query(cls).filter(cls.email == email).first()
+        return bool(user)
+
+    def to_dict(self):
+        return {"id": self.user_id,
+                "email": self.email,
+                "password": self.password,
+                "age": self.age,
+                "gender": self.gender}
+
