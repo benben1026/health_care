@@ -14,6 +14,7 @@ def disease_entry(disease_id):
 
     session = Session()
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first().to_dict()
+    session.close()
     return render_template('disease.html', disease=disease)
 @app.route('/category')
 def disease_category():
@@ -55,6 +56,7 @@ def get_diseases_list():
         if offset and str(offset).isdigit():
             tmp_query = tmp_query.offset(int(offset))
         result = tmp_query.all()
+        session.close()
         return json.dumps(result)
     elif request.method == "POST":
         ids = request.get_json()
@@ -62,6 +64,7 @@ def get_diseases_list():
         rv = {}
         for disease in diseases:
             rv[disease.disease_id] = disease.to_dict()
+        session.close()
         return json.dumps(rv)
 
 
@@ -79,6 +82,7 @@ def query_by_position():
     rv = []
     for disease in diseases:
         rv.append(disease)
+    session.close()
     return json.dumps(rv)
 
 
@@ -86,6 +90,7 @@ def query_by_position():
 def get_disease_detail(disease_id):
     session = Session()
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first()
+    session.close()
     return json.dumps(disease.to_dict())
 
 
@@ -97,6 +102,7 @@ def query_level1(level1_pos):
         return json.dumps({"Err": "Incorrect Level1 keyword"})
     level1_id = level1_id[0]
     level2s = session.query(BodyLevel2.id, BodyLevel2.name).filter(BodyLevel2.upper_level_id == level1_id).all()
+    session.close()
     return json.dumps(level2s)
 
 
@@ -143,6 +149,7 @@ def symptom_match():
                        "name": disease_tuple[1],
                        "description": retrieve_subtitle(disease_tuple[2])["Description"],
                        "relevance": diseases_matched_count[disease_tuple[0]]})
+        session.close()
         return json.dumps(rv)
 
 
@@ -151,6 +158,7 @@ def search_synonym(query):
     session = Session()
     p = PubmedGetter(query)
     p.send()
+    session.close()
     return p.extract()
 
 
