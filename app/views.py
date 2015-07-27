@@ -11,8 +11,6 @@ def index():
 
 @app.route('/disease/<disease_id>')
 def disease_entry(disease_id):
-
-    session = Session()
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first().to_dict()
     session.close()
     return render_template('disease.html', disease=disease)
@@ -45,8 +43,6 @@ def document(file_name):
 
 @app.route('/api/diseases', methods=['GET', 'POST'])
 def get_diseases_list():
-
-    session = Session()
     if request.method == "GET":
         limit = request.args.get('limit')
         offset = request.args.get('offset')
@@ -73,7 +69,7 @@ def query_by_position():
     query = request.get_json()
     if not query["level1"] or not query["level2"]:
         return json.dumps({"Err": "Level1 and Level2 position required"})
-    session = Session()
+    
     level1_id = session.query(BodyLevel1.id).filter(BodyLevel1.name == query["level1"]).first()[0]
     level2_id = session.query(BodyLevel2.id).filter(BodyLevel2.name == query["level2"]).first()[0]
     if not level1_id or not level2_id:
@@ -88,15 +84,16 @@ def query_by_position():
 
 @app.route('/api/diseases/<disease_id>')
 def get_disease_detail(disease_id):
-    session = Session()
+    
     disease = session.query(Disease).filter(Disease.disease_id == disease_id).first()
+    rv = disease.to_dict()
     session.close()
-    return json.dumps(disease.to_dict())
+    return json.dumps(rv)
 
 
 @app.route('/api/position/level1/<level1_pos>')
 def query_level1(level1_pos):
-    session = Session()
+    
     level1_id = session.query(BodyLevel1.id).filter(BodyLevel1.name == level1_pos).first()
     if not level1_id:
         return json.dumps({"Err": "Incorrect Level1 keyword"})
@@ -109,7 +106,7 @@ def query_level1(level1_pos):
 @app.route('/api/service/symptom-match', methods=['POST'])
 def symptom_match():
     from helper import retrieve_subtitle
-    session = Session()
+    
     if request.method == "POST":
         match_list = request.get_json()
         fulltext_limit = None
@@ -155,7 +152,7 @@ def symptom_match():
 
 @app.route('/api/service/search-synonym/<query>')
 def search_synonym(query):
-    session = Session()
+    
     p = PubmedGetter(query)
     p.send()
     session.close()
