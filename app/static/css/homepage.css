@@ -212,3 +212,19 @@
 	overflow-y:hidden;
 	border:none;
 }
+.modal-header, .my-modal-h4, .modal-close {
+	background-color: rgb(68,0,98);
+	color:white !important;
+	text-align: center;
+	font-size: 30px;
+}
+.my-modal-btn{
+	background-color: rgb(68,0,98) !important;
+	color:white !important;
+}
+.my-modal-btn:hover{
+	background-color: rgb(75,0,130) !important;
+}
+.modal-footer {
+	background-color: #f9f9f9 !important;
+}
