@@ -23,7 +23,7 @@
                 });
                 $(btn1).appendTo(newDiv);
                 var btn2 = $('<button/>', {
-                    'class': "btn btn-primary"
+                    'class': "btn btn-primary tag-close"
                 });
                 $(btn2).css({
                     "color": "rgb(255,255,255)",
@@ -35,9 +35,9 @@
                 }).appendTo(btn2);
                 $(btn2).appendTo(newDiv);
                 $(newDiv).appendTo("#tag-group");
-                $(btn2).click(function () {
-                    $(this).parent().remove();
-                });
+                // $(btn2).click(function () {
+                //     $(this).parent().remove();
+                // });
                 $('#inputSymptom').val('');
             }
         }
@@ -206,7 +206,8 @@
             $(btn2).appendTo(newDiv);
             $(newDiv).appendTo("#tag-group");
             $(btn2).click(function () {
-                $(temp).parent().remove();
+                $(this).parent().remove();
+                search();
             });
             search();
         }
@@ -229,6 +230,13 @@
                 }
             })
         }
+
+$(document).ready(function(){
+    $('#tag-group').delegate('.tag-close', 'click', function(){
+        $($(this).parent().remove());
+        search();
+    })
+});
     </script>
 
     <div class="container">
@@ -341,7 +349,7 @@
             });
             $(btn1).appendTo(newDiv);
             var btn2 = $('<button/>', {
-                'class': "btn btn-primary"
+                'class': "btn btn-primary tag-close"
             });
             $(btn2).css({
                 "color": "rgb(255,255,255)",
@@ -353,9 +361,9 @@
             }).appendTo(btn2);
             $(btn2).appendTo(newDiv);
             $(newDiv).appendTo("#tag-group");
-            $(btn2).click(function () {
-                $(this).parent().remove();
-            })
+            // $(btn2).click(function () {
+            //     $(this).parent().remove();
+            // })
         });
     </script>
 
