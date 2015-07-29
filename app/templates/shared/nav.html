@@ -85,29 +85,38 @@
 		  <div class="modal-content">
 			<div class="modal-header" style="padding:35px 50px;">
 			  <button type="button" class="close" style="color:white !important;" data-dismiss="modal">&times;</button>
-			  <h4 class="my-modal-h4"><span class="glyphicon glyphicon-file"></span> Sign in</h4>
+			  <h4 class="my-modal-h4"><span class="glyphicon glyphicon-file"></span> Sign up</h4>
 			</div>
 			<div class="modal-body" style="padding:40px 50px;">
-			  <form role="form">
+			  <form id="signup-form" role="form">
 			    <div class="form-group">
-				  <label for="email"><span class="glyphicon glyphicon-envelope"></span> Email</label>
-				  <input type="text" class="form-control" id="email" placeholder="Enter email">
+				  <label for="email"><span class="glyphicon glyphicon-envelope"></span> Email*</label>
+				  <input type="text" class="form-control" id="signup-email" placeholder="Enter email">
+				  <span id="signup-email-ok" class="glyphicon glyphicon-ok signup-email-check" style="display:none;"> Ok</span>
+				  <span id="signup-email-invalid" class="glyphicon glyphicon-remove signup-email-check" style="display:none;"> Invalid Email Address</span>
+				  <span id="signup-email-used" class="glyphicon glyphicon-remove signup-email-check" style="display:none;"> This email has been used</span>
 				</div>
 				<div class="form-group">
-				  <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
-				  <input type="text" class="form-control" id="usrname" placeholder="Enter username">
+				  <label for="username"><span class="glyphicon glyphicon-user"></span> Username*</label>
+				  <input type="text" class="form-control" id="signup-username" placeholder="Enter username">
+				  <span id="signup-username-ok" class="glyphicon glyphicon-ok signup-username-check" style="display:none;"> Ok</span>
+				  <span id="signup-username-empty" class="glyphicon glyphicon-remove signup-username-check" style="display:none;"> Username can't be empty</span>
 				</div>
 				<div class="form-group">
-				  <label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-				  <input type="text" class="form-control" id="password" placeholder="Enter password">
+				  <label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password*</label>
+				  <input type="password" class="form-control" id="signup-password" placeholder="Enter password">
+				  <span id="signup-password-ok" class="glyphicon glyphicon-ok signup-password-check" style="display:none;"> Ok</span>
+				  <span id="signup-password-empty" class="glyphicon glyphicon-remove signup-password-check" style="display:none;"> Password can't be empty</span>
 				</div>
 				<div class="form-group">
-				  <label for="checkPassword"><span class="glyphicon glyphicon-eye-open"></span> Check Password</label>
-				  <input type="text" class="form-control" id="checkPassword" placeholder="Check password">
+				  <label for="checkPassword"><span class="glyphicon glyphicon-eye-open"></span> Check Password*</label>
+				  <input type="password" class="form-control" id="signup-checkPassword" placeholder="Check password">
+				  <span id="signup-checkPassword-ok" class="glyphicon glyphicon-ok signup-checkPassword-check" style="display:none;"> Ok</span>
+				  <span id="signup-checkPassword-notMatch" class="glyphicon glyphicon-remove signup-checkPassword-check" style="display:none;"> Password does not match</span>
 				</div>
-				<div class="checkbox">
+				<!-- <div class="checkbox">
 				  <label><input type="checkbox" value="" checked>Remember me</label>
-				</div>
+				</div> -->
 				  <button type="submit" class="btn my-modal-btn btn-block"><span class="glyphicon glyphicon-ok"></span> Register</button>
 			  </form>
 			</div>
@@ -118,12 +127,95 @@
 	</div>
 	
 <script>
+var signupCheck = {email:false, username:false, password:false, passwordMatch:false};
+function signupCheckEmail(){
+	var email = $('#signup-email').val().trim();
+	var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+	if(!re.test(email)){
+		signupCheck.email = false;
+		$('.signup-email-check').hide();
+		$('#signup-email-invalid').show();
+		return;
+	}
+	$.ajax({
+		url:'/api/user/' + email,
+		type:'GET',
+		dataType:'json',
+		success:function(data){
+			$('.signup-email-check').hide();
+			if(!data['exist']){
+				signupCheck.email = true;
+				$('#signup-email-ok').show();
+			}else{
+				signupCheck.email = false;
+				$('#signup-email-used').show();
+			}
+		}
+	});
+}
+
+function signupCheckPassword(){
+	$('.signup-checkPassword-check').hide();
+	if($('#signup-password').val() == $('#signup-checkPassword').val()){
+		signupCheck.passwordMatch = true;
+		$('#signup-checkPassword-ok').show();
+	}else{
+		signupCheck.passwordMatch = false;
+		$('#signup-checkPassword-notMatch').show();
+	}
+}
+
 $(document).ready(function(){
     $("#myRegister").click(function(){
         $("#myModalRegister").modal();
     });
 	$("#myLogin").click(function(){
         $("#myModalLogin").modal();
+    });
+    $('#signup-email').blur(signupCheckEmail);
+    $('#signup-checkPassword').blur(signupCheckPassword);
+    $('#signup-password').blur(function(){
+    	$('.signup-password-check').hide();
+    	if($('#signup-password').val() != ''){
+    		signupCheck.password = true;
+    		$('#signup-password-ok').show();
+    	}else{
+    		signupCheck.password = false;
+    		$('#signup-password-empty').show();
+    	}
+    });
+    $('#signup-username').blur(function(){
+    	$('.signup-username-check').hide();
+    	if($('#signup-username').val() != ''){
+    		signupCheck.username = true;
+    		$('#signup-username-ok').show();
+    	}else{
+    		signupCheck.username = false;
+    		$('#signup-username-empty').show();
+    	}
+    });
+    $('#signup-form').submit(function(event){
+    	//alert('form submitted');
+    	event.preventDefault();
+    	//console.log(signupCheck);
+    	//console.log($('#signup-email').val().trim() + $('#signup-password') + $('#signup-username'))
+    	if(!signupCheck.email || !signupCheck.username || !signupCheck.password || !signupCheck.passwordMatch){
+    		alert('Please check the form again.');
+    		return;
+    	}
+    	$.ajax({
+    		url: '/api/user',
+    		type: 'POST',
+    		dataType: 'json',
+    		data:JSON.stringify({email:$('#signup-email').val().trim(), password:$('#signup-password').val(), username:$('#signup-username').val(), gender:'male', age:22}),
+    		contentType:'application/json',
+    		success:function(data){
+    			console.log(data);
+    		},
+    		error:function(data){
+    			alert('error');
+    		}
+    	});
     });
 });
 </script>
