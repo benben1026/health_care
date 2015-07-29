@@ -46,16 +46,15 @@ def add_user():
     if request.method == "POST":
         inf = request.get_json()
         for field in User.required:
-            if not inf[field]:
-                return "Invalid"
-        new_user = User(inf["email"], inf["password"], gender=inf["gender"], age=inf["age"])
+            if field not in inf:
+                return json.dumps({"Err": "Required field missing"})
+        new_user = User(inf["email"], inf["password"], gender=inf.get("gender", None), age=inf.get("age", None))
         db_session.add(new_user)
         try:
             db_session.commit()
         except exc.SQLAlchemyError as e:
             db_session.rollback()
             err = str(e)
-
         finally:
             db_session.close()
         return json.dumps({"Err": err})
