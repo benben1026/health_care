@@ -84,17 +84,19 @@ class User(Base):
     __tablename__ = "User"
     user_id = Column(BigInteger, primary_key=True, autoincrement=True)
     email = Column(String(50), unique=True, nullable=False)
+    username = Column(String(50), nullable=False)
     password = Column(String(64), nullable=False)
     age = Column(SmallInteger)
     gender = Column(Enum("male", "female"))
 
-    required = ["email", "password"]
+    required = ["email", "password", "username"]
 
-    def __init__(self, email, password, age=None, gender=None):
+    def __init__(self, email, password, username, age=None, gender=None):
         if not email or not password:
             return
         self.email = email
         self.password = password_hash(password)
+        self.username = username
         self.age = age
         self.gender = gender
 
@@ -112,6 +114,7 @@ class User(Base):
     def to_dict(self):
         return {"id": self.user_id,
                 "email": self.email,
+                "username": self.username,
                 "password": self.password,
                 "age": self.age,
                 "gender": self.gender}

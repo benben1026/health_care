@@ -48,7 +48,9 @@ def add_user():
         for field in User.required:
             if field not in inf:
                 return json.dumps({"Err": "Required field missing"})
-        new_user = User(inf["email"], inf["password"], gender=inf.get("gender", None), age=inf.get("age", None))
+        new_user = User(inf["email"], inf["password"], inf["username"],
+                        gender=inf.get("gender", None),
+                        age=inf.get("age", None))
         db_session.add(new_user)
         try:
             db_session.commit()

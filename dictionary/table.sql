@@ -198,6 +198,7 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(50) UNIQUE NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(64) NOT NULL,
   `age` tinyint(4) DEFAULT NULL,
   `gender` ENUM('male', 'female') DEFAULT NULL,
