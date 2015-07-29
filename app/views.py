@@ -1,5 +1,5 @@
 from flask import render_template, request, send_from_directory, session
-from sqlalchemy import distinct
+from sqlalchemy import distinct, exc
 from app import app
 from model import *
 import json, copy
@@ -42,6 +42,7 @@ def document(file_name):
 # ------------------------------------- User API ----------------------------------------------#
 @app.route('/api/user', methods=['POST', 'GET', 'PUT'])
 def add_user():
+    err = None
     if request.method == "POST":
         inf = request.get_json()
         for field in User.required:
@@ -49,9 +50,15 @@ def add_user():
                 return "Invalid"
         new_user = User(inf["email"], inf["password"], gender=inf["gender"], age=inf["age"])
         db_session.add(new_user)
-        db_session.commit()
-        db_session.close()
-        return json.dumps({"Err": None})
+        try:
+            db_session.commit()
+        except exc.SQLAlchemyError as e:
+            db_session.rollback()
+            err = str(e)
+
+        finally:
+            db_session.close()
+        return json.dumps({"Err": err})
     if request.method == "GET":
         if "user" in session:
             user_dict = copy.deepcopy(session["user"])
