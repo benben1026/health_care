@@ -37,6 +37,9 @@
                 <button type="button" id="btnZ" class="btn my-category-btn">Z</button>
             </div>
         </div>
+        <div id="loading" class="row">
+            <img src="/static/loading.gif" />
+        </div>
     </div>
 
     <!--<div class="container">
@@ -83,6 +86,7 @@
                 success: function (data) {
                     if (data.length == 0) {
                         alert('You got nothing from server.');
+                        $('#loading').hide();
                         return;
                     }
                     var temp = [];
@@ -96,10 +100,12 @@
                         if (i >= data.length)
                             break;
                     }
+                    $('#loading').hide();
                     createContents(targetArray);
                 },
                 error: function () {
                     alert('Failed to get data.');
+                    $('#loading').hide();
                 }
             })
         }
