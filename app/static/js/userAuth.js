@@ -1,4 +1,53 @@
 var signupCheck = {email:false, username:false, password:false, passwordMatch:false};
+var loginInfo = {login: false, email:'', username:'', gender:'', age:''}
+function checkLogin(){
+    $.ajax({
+        url: '/api/user',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data){
+            console.log(data);
+            if(data["Err"] == "No session"){
+                $('#nav-login').hide();
+                $('#nav-notLogin').show();
+                loginInfo.login = false;
+            }else{
+                $('#nav-login').show();
+                $('#nav-notLogin').hide();
+                loginInfo.login = true;
+                loginInfo.email = data['email'];
+                loginInfo.username = data['username'];
+                loginInfo.gender = data['gender'];
+                loginInfo.age = data['age'];
+                $('#nav-username').text(loginInfo.email);
+            }
+        },
+        error:function(){
+            console.log('Error occurs when checking login info');
+        }
+    })
+}
+function login(email, password){
+    $.ajax({
+        url: '/api/session',
+        type: 'POST',
+        dataType: 'json',
+        contentType:'application/json',
+        data: JSON.stringify({email:email, password:password}),
+        success:function(data){
+            console.log(data);
+            if(data['Err']){
+                alert(data['Err']);
+            }else{
+                location.reload();
+            }
+        },
+        error:function(){
+            alert('login error!');
+        }
+    });
+}
+
 function signupCheckEmail(){
 	var email = $('#signup-email').val().trim();
 	var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
@@ -37,6 +86,8 @@ function signupCheckPassword(){
 }
 
 $(document).ready(function(){
+    checkLogin();
+
     $("#myRegister").click(function(){
         $("#myModalRegister").modal();
     });
@@ -83,9 +134,17 @@ $(document).ready(function(){
     		success:function(data){
     			console.log(data);
     		},
-    		error:function(data){
+    		error:function(){
     			alert('error');
-    		}
+    		},
+            complete:function(){
+                login($('#signup-email').val().trim(), $('#signup-password').val());
+            }
     	});
+    });
+
+    $('#login-form').submit(function(event){
+        event.preventDefault();
+        login($('#login-email').val(), $('#login-password').val());
     });
 });
