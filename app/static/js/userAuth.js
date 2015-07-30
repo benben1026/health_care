@@ -19,7 +19,7 @@ function checkLogin(){
                 loginInfo.username = data['username'];
                 loginInfo.gender = data['gender'];
                 loginInfo.age = data['age'];
-                $('#nav-username').text(loginInfo.email);
+                $('#nav-username').text(loginInfo.username);
             }
         },
         error:function(){
