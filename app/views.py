@@ -48,7 +48,9 @@ def add_user():
         for field in User.required:
             if field not in inf:
                 return json.dumps({"Err": "Required field missing"})
-        new_user = User(inf["email"], inf["password"], gender=inf.get("gender", None), age=inf.get("age", None))
+        new_user = User(inf["email"], inf["password"], inf["username"],
+                        gender=inf.get("gender", None),
+                        age=inf.get("age", None))
         db_session.add(new_user)
         try:
             db_session.commit()
@@ -80,8 +82,13 @@ def authentic():
         if "email" not in inf or "password" not in inf:
             return "Invalid"
         authentic_user = User.authentic(db_session, inf["email"], inf["password"])
+        permanent = False
+        if "permanent" in inf:
+            permanent = bool(inf["permanent"])
+        if permanent:
+            session.permanent = True
         if not authentic_user:
-            return json.dumps({"Err": "Invalid email of password"})
+            return json.dumps({"Err": "Invalid email or password"})
         session["user"] = authentic_user.to_dict()
         return json.dumps({"Err": None})
     if request.method == 'DELETE':

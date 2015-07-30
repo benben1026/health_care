@@ -423,6 +423,9 @@
         "email": {
           "type": "string"
         },
+        "username": {
+          "type": "string"
+        },
         "gender": {
           "type": "string",
           "enum": ["male", "female"]
@@ -445,6 +448,9 @@
         },
         "email": {
           "type": "string"
+        },
+        "permanent": {
+          "type": "boolean"
         }
       }
     },
@@ -459,6 +465,9 @@
           "type": "string"
         },
         "email": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         },
         "gender": {
@@ -478,6 +487,9 @@
       ],
       "properties": {
         "email": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         },
         "gender": {
