@@ -1,5 +1,5 @@
 from flask import render_template, request, send_from_directory, session
-from sqlalchemy import distinct, exc
+from sqlalchemy import distinct, exc, or_
 from app import app
 from model import *
 import json, copy
@@ -150,14 +150,15 @@ def get_disease_detail(disease_id):
     return json.dumps(rv)
 
 
-@app.route('/api/position/level1/<level1_pos>')
-def query_level1(level1_pos):
-
+@app.route('/api/position/level1/<level1_pos>/<gender>')
+def query_level1(level1_pos, gender):
     level1_id = db_session.query(BodyLevel1.id).filter(BodyLevel1.name == level1_pos).first()
     if not level1_id:
         return json.dumps({"Err": "Incorrect Level1 keyword"})
     level1_id = level1_id[0]
-    level2s = db_session.query(BodyLevel2.id, BodyLevel2.name).filter(BodyLevel2.upper_level_id == level1_id).all()
+    level2s = db_session.query(BodyLevel2.id, BodyLevel2.name)\
+        .filter(BodyLevel2.upper_level_id == level1_id, or_(BodyLevel2.gender == gender, BodyLevel2.gender == "both"))\
+        .all()
     db_session.close()
     return json.dumps(level2s)
 

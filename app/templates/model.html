@@ -7,11 +7,14 @@ $(document).ready(function(){
 		if($("#myFrame").attr("src").indexOf("testMale") >= 0 ){
 			$("#myFrame").attr("src","/static/summer/testFemale.html");
 			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
+            gender = "female";
 		}
 		else{
 			$("#myFrame").attr("src","/static/summer/testMale.html");
 			$( '#myFrame' ).attr( 'src', function ( i, val ) { return val; });
+            gender = "male";
 		}
+        $("#current-gender").html(gender);
 	})
 });
 
@@ -19,7 +22,7 @@ function get_position_lev1(level1){
 	if(level1 == "")
 		return;
 	$.ajax({
-		url:'/api/position/level1/' + level1,
+		url:'/api/position/level1/' + level1+ '/' + gender,
 		type:'GET',
 		dataType: 'json',
 		success:function(data){
@@ -84,11 +87,11 @@ function get_position(level1, level2){
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-5">
 			<h1	class="my-h1-homepage">3D Human Body</h1>
 		</div>
-		<div class="col-md-3">
-			<a  class="my-gender-switch" id="genderSwitch">change gender >></a>
+		<div class="col-md-4">
+            <p  class="my-current-gender"><span id="current-gender"></span><a  class="my-gender-switch" id="genderSwitch">change gender >></a></p>
 		</div>
 	</div>
 </div>
@@ -136,6 +139,10 @@ var position_level1;
 var position_level2;
 var last_level1_highlight;
 var target_disease_id;
+var gender = "male";
+
+//Fill gender <p>
+$("#current-gender").html(gender);
 
 //default select level1
 var default_lev1 = "chest";
@@ -159,6 +166,17 @@ eventer(messageEvent,function(e) {
 		$("#panel").slideToggle("slow");
 	}
 },false);
+
+$(window).on("positionChanged", function(e){
+    position_level1 = e.originalEvent.position;
+    get_position_lev1(position_level1);
+	if( firstVisit == "1"){
+		firstVisit = "0";
+		$("#panel").slideToggle("slow");
+	}
+});
+
+
 
 function getLev2(temp){
 	$(temp).removeClass('my-list-group-item');

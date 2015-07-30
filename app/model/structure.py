@@ -28,9 +28,10 @@ class BodyLevel2(Base):
     name = Column(String(255))
     upper_level_id = Column(Integer, ForeignKey('Body_Level1.id'))
     upper_level = relationship("BodyLevel1")
+    gender = Column(Enum("male", "female", "both"))
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name, "upper_level": self.upper_level.to_dict()}
+        return {"id": self.id, "name": self.name, "gender": self.gender, "upper_level": self.upper_level.to_dict()}
 
 
 class Disease(Base):
