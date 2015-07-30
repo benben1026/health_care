@@ -36,6 +36,7 @@ CREATE TABLE `Body_Level2` (
   `id` smallint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `upper_level_id` int(11) DEFAULT NULL,
+  `gender` ENUM('male', 'female', 'both') DEFAULT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`upper_level_id`) REFERENCES `Body_Level1` (`id`) ON DELETE CASCADE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -198,6 +199,7 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(50) UNIQUE NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(64) NOT NULL,
   `age` tinyint(4) DEFAULT NULL,
   `gender` ENUM('male', 'female') DEFAULT NULL,

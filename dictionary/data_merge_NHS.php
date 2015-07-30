@@ -62,6 +62,9 @@
 		$attribute_list["possible complications"] = "";
 		$attribute_list["exams and tests"] = "";
 		$gender = "both"; //ENUM(male, female, both)
+		$has_position = false;
+		$position1 = "";
+		$position2 = "";
 		foreach($data as $key => $value){
 			if(strrpos(strtolower($key), "symptom") > -1){
 				//echo "enter symptom";
@@ -72,9 +75,10 @@
 				if(!isset($value->Female))
 					$gender = "male";
 			}else if(strrpos(strtolower($key), "position") > -1 && isset($value->level1) && isset($value->level2)){
-				//echo "value = " . $value[""];
-				//echo "level 1 = " . $value["level1"] . "; level 2 = " . $value["level2"] . "\n";
-				insert_position($disease_id, $value->level1, $value->level2);
+				$has_position = true;
+				$position1 = $value->level1;
+				$position2 = $value->level2;
+				//insert_position($disease_id, $value->level1, $value->level2);
 			}else if(strrpos(strtolower($key), "introduction") > -1){
 				$attribute_list["description"] = concatenate_attr($value);
 			}else if(strrpos(strtolower($key), "complication") > -1){
@@ -88,6 +92,9 @@
 			}
 		}
 
+		if($has_position){
+			insert_position($disease_id, $position1, $position2, $gender);
+		}
 		$stmt_update_attribute->bind_param("sssssssi", $attribute_list["treatment"], $attribute_list["causes"], $attribute_list["prevention"], $attribute_list["description"], $attribute_list["possible complications"], $attribute_list["exams and tests"], $gender, $disease_id);
 		if(!$stmt_update_attribute->execute()){
 			echo "Fail to update attribute:" . $stmt_update_attribute->error . "\n";
@@ -137,13 +144,13 @@
 		}
 	}
 
-	function insert_position($disease_id, $position1, $position2){
+	function insert_position($disease_id, $position1, $position2, $gender){
 		global $link;
 
 		$stmt_search_position1 = $link->prepare("SELECT id FROM Body_Level1 WHERE name=?");
 		$stmt_search_position2 = $link->prepare("SELECT id FROM Body_Level2 WHERE upper_level_id=? AND name=?");
 		$stmt_insert_position1 = $link->prepare("INSERT INTO Body_Level1(`name`) VALUES(?)");
-		$stmt_insert_position2 = $link->prepare("INSERT INTO Body_Level2(`name`, `upper_level_id`) VALUES(?, ?)");
+		$stmt_insert_position2 = $link->prepare("INSERT INTO Body_Level2(`name`, `upper_level_id`, `gender`) VALUES(?, ?, ?)");
 
 
 		$stmt_search_position1->bind_param("s", $position1);
@@ -158,7 +165,7 @@
 			$stmt_search_position2->store_result();
 			if(!$stmt_search_position2->fetch()){
 				//position 2 not found
-				$stmt_insert_position2->bind_param("si", $position2, $position1_id);
+				$stmt_insert_position2->bind_param("sis", $position2, $position1_id, $gender);
 				if(!$stmt_insert_position2->execute()){
 					echo "Fail to add position2(1): " . $position2 . " Error:" . $stmt_insert_position2->error . "\n";
 					return false;
@@ -171,7 +178,7 @@
 			$stmt_insert_position1->bind_param("s", $position1);
 			if($stmt_insert_position1->execute()){
 				$position1_id = $link->insert_id;
-				$stmt_insert_position2->bind_param("si", $position2, $position1_id);
+				$stmt_insert_position2->bind_param("sis", $position2, $position1_id, $gender);
 				if($stmt_insert_position2->execute()){
 					$position2_id = $link->insert_id;
 				}else{
