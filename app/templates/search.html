@@ -103,6 +103,9 @@
                 contentType: 'application/json',
                 data: jsonString,
                 success: function (data) {
+                    data.sort(function(a, b){
+                        return b.relevance - a.relevance;
+                    });
                     var divDisplay = document.getElementById("searchResults");
                     var str = "", diseaseQueue = [];
                     for (var index in data) {
