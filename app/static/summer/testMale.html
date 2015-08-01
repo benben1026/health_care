@@ -42,7 +42,7 @@ var hoverMaterial = new THREE.MeshPhongMaterial( {
     color: 0x996633, 
     specular: 0x050505,
     shininess: 100
-} ) 
+} );
 var tmpMaterial;
 //json file names
 var jsonNames = ['Leg','Head','Arm','Abdomen','Arm','Chest'];
@@ -233,8 +233,11 @@ function onDocumentMouseDown( event ) {
 	// if there is one (or more) intersections
 	if ( intersects2.length > 0 )
 	{
-		var position = intersects2[0].object.name
-		parent.postMessage(position,"http://128.199.82.15:3000/model");  
+		var position = intersects2[0].object.name;
+        var positionEvent = window.document.createEvent('Event');
+        positionEvent.initEvent('positionChanged', true, true);
+        positionEvent.position = position;
+		parent.dispatchEvent(positionEvent);
 	}
 }
 

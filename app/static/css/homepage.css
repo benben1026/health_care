@@ -73,10 +73,23 @@
 }
 .my-gender-switch{
 	color:rgb(68,0,98) !important;
+	font-family: 'Helvetica Neue Thin Extended', Helvetica, Arial, sans-serif !important;
+	font-size: 20px !important;
+	position: relative;
+	top: -2px;
+	margin-left: 20px;
+}
+
+.my-current-gender{
+color:rgb(68,0,98) !important;
 	position:relative !important;
 	top:30px !important;
 	font-family: 'Helvetica Neue Thin Extended', Helvetica, Arial, sans-serif !important;
-	font-size: 20px !important;
+	margin: 0;
+}
+.my-current-gender>#current-gender{
+	font-size: 32px;
+	font-weight: bold;
 }
 .my-second-select{
 	margin-top:0px !important;

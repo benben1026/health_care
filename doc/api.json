@@ -142,7 +142,7 @@
         }
       }
     },
-    "/api/position/level1/{level1_position}": {
+    "/api/position/level1/{level1_position}/{gender}": {
       "get": {
         "description": "Return the level2 position that belongs to given level1 position",
         "produces": [
@@ -155,6 +155,14 @@
             "description": "Keyword of level1 position",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "gender",
+            "in": "path",
+            "description": "Gender",
+            "required": true,
+            "type": "string",
+            "enum": ["male", "female"]
           }
         ],
         "responses": {
