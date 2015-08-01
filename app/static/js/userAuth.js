@@ -27,13 +27,13 @@ function checkLogin(){
         }
     })
 }
-function login(email, password){
+function login(email, password,rememberMe){
     $.ajax({
         url: '/api/session',
         type: 'POST',
         dataType: 'json',
         contentType:'application/json',
-        data: JSON.stringify({email:email, password:password}),
+        data: JSON.stringify({email:email, password:password, permanent:rememberMe}),
         success:function(data){
             console.log(data);
             if(data['Err']){
@@ -129,7 +129,7 @@ $(document).ready(function(){
     		url: '/api/user',
     		type: 'POST',
     		dataType: 'json',
-    		data:JSON.stringify({email:$('#signup-email').val().trim(), password:$('#signup-password').val(), username:$('#signup-username').val(), gender:'male', age:22}),
+    		data:JSON.stringify({email:$('#signup-email').val().trim(), password:$('#signup-password').val(), username:$('#signup-username').val(), gender:$('input[name=gender]:checked', '#signup-form').val(), age:$('#signup-age').val()}),
     		contentType:'application/json',
     		success:function(data){
     			console.log(data);
@@ -145,6 +145,6 @@ $(document).ready(function(){
 
     $('#login-form').submit(function(event){
         event.preventDefault();
-        login($('#login-email').val(), $('#login-password').val());
+        login($('#login-email').val(), $('#login-password').val(), $('#login-rememberMe').is(':checked'));
     });
 });

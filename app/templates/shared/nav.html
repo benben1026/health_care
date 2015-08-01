@@ -106,6 +106,15 @@
 				  <span id="signup-username-empty" class="glyphicon glyphicon-remove signup-username-check" style="display:none;"> Username can't be empty</span>
 				</div>
 				<div class="form-group">
+					<label for="gender"><span class="glyphicon glyphicon-heart"></span> Gender*</label><br />
+					<input type="radio" class="signup-gender" name="gender" value="male" checked="checked" />Male
+					<input type="radio" class="signup-gender" name="gender" value="female"/>Female
+				</div>
+				<div class="form-group">
+					<label for="age"><span class="glyphicon glyphicon-leaf"></span> Age*</label></label>
+					<input type="number" class="form-control" id="signup-age" min="0"/>
+				</div>
+				<div class="form-group">
 				  <label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password*</label>
 				  <input type="password" class="form-control" id="signup-password" placeholder="Enter password">
 				  <span id="signup-password-ok" class="glyphicon glyphicon-ok signup-password-check" style="display:none;"> Ok</span>
