@@ -48,6 +48,25 @@ function login(email, password,rememberMe){
     });
 }
 
+function logout(){
+    $.ajax({
+        url: '/api/session',
+        type: 'DELETE',
+        dataType: 'json',
+        success:function(data){
+            console.log(data);
+            if(data['Err']){
+                alert(data['Err']);
+            }else{
+                location.reload();
+            }
+        },
+        error:function(){
+            alert('login error!');
+        }
+    });
+}
+
 function signupCheckEmail(){
 	var email = $('#signup-email').val().trim();
 	var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
@@ -133,13 +152,11 @@ $(document).ready(function(){
     		contentType:'application/json',
     		success:function(data){
     			console.log(data);
+                login($('#signup-email').val().trim(), $('#signup-password').val());
     		},
     		error:function(){
-    			alert('error');
-    		},
-            complete:function(){
-                login($('#signup-email').val().trim(), $('#signup-password').val());
-            }
+    			alert('Server is busy, please try later');
+    		}
     	});
     });
 
