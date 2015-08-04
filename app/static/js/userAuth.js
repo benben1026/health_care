@@ -113,6 +113,9 @@ $(document).ready(function(){
 	$("#myLogin").click(function(){
         $("#myModalLogin").modal();
     });
+	$("#nav-username").click(function(){
+        $("#myModalUpdateInfo").modal();
+    });
     $('#signup-email').blur(signupCheckEmail);
     $('#signup-checkPassword').blur(signupCheckPassword);
     $('#signup-password').blur(function(){

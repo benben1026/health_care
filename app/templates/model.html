@@ -2,6 +2,9 @@
 
 {% block content %}
 <script> 
+
+var show3D = false;
+
 $(document).ready(function(){
 	$("#genderSwitch").click(function(){
 		if($("#myFrame").attr("src").indexOf("testMale") >= 0 ){
@@ -15,8 +18,29 @@ $(document).ready(function(){
             gender = "male";
 		}
         $("#current-gender").html(gender);
+		show3D = true;
+		$('#myFrame').show();
+		$('#level1-image').hide();
+	})
+	$("#modelDisplay").click(function(){
+		show3D = true;
+		$('#myFrame').show();
+		$('#level1-image').hide();
+		$(this).hide();
 	})
 });
+
+var firstVisit ="0";
+
+//a function that can delete all special characters
+function stripscript(s) { 
+	var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]") 
+	var rs = ""; 
+	for (var i = 0; i < s.length; i++) { 
+		rs = rs+s.substr(i, 1).replace(pattern, ''); 
+	} 
+	return rs; 
+} 
 
 function get_position_lev1(level1){
 	if(level1 == "")
@@ -33,11 +57,36 @@ function get_position_lev1(level1){
 			var targetDiv = document.getElementById('selectLev');
 			var str = "";
 			for(var i = 0; i < data.length; i++){
-				str += "<a class='list-group-item my-list-group-item flip' onclick='getLev2(this)'>";
+				str += "<a class='list-group-item my-list-group-item flip' ";
+				str += "name='";
+				temp = data[i][1];
+				temp = temp.replace(/ /g,'');
+				temp = stripscript(temp);
+				console.log(temp);
+				str += temp;
+				str += "'";
+				str += "onclick='getLev2(this)'>";
 				str += data[i][1];
 				str += "</a>";
 			}
 			targetDiv.innerHTML = str;
+			if(show3D == true){
+				$('#myFrame').hide();
+				var path = "../static/summer/images/";
+				path += gender;
+				path += "-";
+				path += level1;
+				path += ".png";
+				console.log(path);
+				$('#level1-image').attr("src",path);
+				$('#level1-image').show();
+				$('#modelDisplay').show();
+			}
+			show3D = true;
+			if( firstVisit == "1"){
+				firstVisit = "0";
+				$("#panel").slideToggle("slow");
+			}
 		},
 		error:function(){
 
@@ -45,7 +94,6 @@ function get_position_lev1(level1){
 	});
 }
 
-var firstVisit ="0";
 
 function get_position(level1, level2){
 	if(level1 == "" || level2 == "")
@@ -90,9 +138,11 @@ function get_position(level1, level2){
 		<div class="col-md-5">
 			<h1	class="my-h1-homepage">3D Human Body</h1>
 		</div>
-		<div class="col-md-4">
-            <p  class="my-current-gender"><span id="current-gender"></span><a  class="my-gender-switch" id="genderSwitch">change gender >></a></p>
+		<div class="col-md-7">
+            <p  class="my-current-gender" style="float:left;"><span id="current-gender"></span><a  class="my-gender-switch" id="genderSwitch">change gender >></a></p>
+			<p  class="my-current-gender" ><a  class="my-gender-switch" id="modelDisplay" style="position:'relative'; top:12px; display:none;">back to 3D >></a></p>
 		</div>
+		
 	</div>
 </div>
 
@@ -107,6 +157,7 @@ function get_position(level1, level2){
 			scrolling="no" 
 			seamless="seamless"
 			src="/static/summer/testMale.html"></iframe>
+			<img id="level1-image" src="../static/summer/images/female-head.png" style="display:none;">
 		</div>
 		<div>
 			<div class="col-md-3" >
@@ -117,7 +168,7 @@ function get_position(level1, level2){
 			</div>
 		</div>
 		<div class="col-md-4" id="panel">
-			<h2 class="my-third-select">Select an specialiesd area</h2>
+			<h2 class="my-third-select">Select a disease</h2>
 			<div class="list-group" id="selectLev2">
 			<!--
 				<a href="#" class="list-group-item my-list-group-item">Angina</a>
@@ -161,10 +212,6 @@ eventer(messageEvent,function(e) {
     var data = e[key];
 	position_level1 = data;
 	get_position_lev1(data);
-	if( firstVisit == "1"){
-		firstVisit = "0";
-		$("#panel").slideToggle("slow");
-	}
 },false);
 
 $(window).on("positionChanged", function(e){
@@ -176,7 +223,12 @@ $(window).on("positionChanged", function(e){
 	}
 });
 
+$('.filp').on("mouseenter",function(){
 
+});
+$('.filp').on("mouseleave",function(){
+
+});
 
 function getLev2(temp){
 	$(temp).removeClass('my-list-group-item');
