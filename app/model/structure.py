@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, Text, BigInteger, ForeignKey, Enum, SmallInteger
 from sqlalchemy.orm import relationship
 from sqlalchemy_fulltext import FullText, FullTextSearch
-from ..helper import retrieve_subtitle, password_hash
+from ..helper import *
 
 Base = declarative_base()
 
@@ -90,6 +90,7 @@ class User(Base):
     age = Column(SmallInteger)
     gender = Column(Enum("male", "female"))
 
+    modified = ["password", "username", "age", "gender"]
     required = ["email", "password", "username"]
 
     def __init__(self, email, password, username, age=None, gender=None):
