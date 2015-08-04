@@ -65,8 +65,6 @@ def confirm_password(jwt_data):
     return "Succeed"
 
 
-
-
 @app.route('/doc/<file_name>')
 def document(file_name):
     import os
@@ -171,6 +169,34 @@ def authentic():
             return json.dumps({"Err": "Do not have a session"})
         session.pop("user", None)
         return json.dumps({"Err": None})
+
+
+# --------------------------------------Record API --------------------------------------------#
+@app.route('/api/record', methods=['GET', 'POST'])
+def handle_record():
+    if "user" not in session:
+        return json.dumps({"Err": "No session"})
+    if request.method == "POST":
+        inf = request.get_json()
+        cur_user = db_session.query(User).filter(User.user_id == session["user"]["id"]).first()
+        diseases = None
+        if "diseases_id" in inf:
+            diseases = db_session.query(Disease).filter(Disease.disease_id.in_(inf["diseases_id"])).all()
+        satisfying = inf.get("satisfying", None)
+        comment = inf.get("comment", None)
+        new_record = Record(satisfying, comment, user=cur_user, diseases=diseases)
+        db_session.add(new_record)
+        try:
+            db_session.commit()
+        except exc.SQLAlchemyError:
+            db_session.rollback()
+        return json.dumps({"Err": None})
+    if request.method == "GET":
+        rv = []
+        records = db_session.query(Record).filter(Record.user_id == session["user"]["id"]).all()
+        for record in records:
+            rv.append(record.to_dict())
+        return json.dumps(rv)
 
 
 # ------------------------------------- Diseases API ------------------------------------------#

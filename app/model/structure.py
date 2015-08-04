@@ -1,8 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, Column, Integer, String, Text, BigInteger, ForeignKey, Enum, SmallInteger
+from sqlalchemy import Table, Column, Integer, String, Text, BigInteger, ForeignKey, Enum, SmallInteger, TIMESTAMP, func
 from sqlalchemy.orm import relationship
 from sqlalchemy_fulltext import FullText, FullTextSearch
 from ..helper import *
+from datetime import datetime
+import time
 
 Base = declarative_base()
 
@@ -81,6 +83,12 @@ class Symptom(Base, FullText):
                 "type": self.symptom_type}
 
 
+class RecordHasDisease(Base):
+    __tablename__ = "Record_Has_Disease"
+    record_id = Column(BigInteger, ForeignKey('Record.record_id'), primary_key=True)
+    disease_id = Column(Integer, ForeignKey('Disease.disease_id'), primary_key=True)
+
+
 class User(Base):
     __tablename__ = "User"
     user_id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -121,3 +129,38 @@ class User(Base):
                 "age": self.age,
                 "gender": self.gender}
 
+
+class Record(Base):
+    __tablename__ = "Record"
+    record_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    date = Column(TIMESTAMP, server_default=func.now())
+    satisfying = Column(SmallInteger)
+    comment = Column(Text)
+
+    user_id = Column(BigInteger, ForeignKey("User.user_id"))
+    user = relationship("User")
+    diseases = relationship("Disease", secondary="Record_Has_Disease")
+
+    def __init__(self, satisfying=None, comment=None, user_id=None, user=None, diseases=None):
+        self.satisfying = satisfying
+        self.comment = comment
+        self.user_id = user_id
+        self.user = user
+        self.date = datetime.utcnow()
+        if diseases:
+            for disease in diseases:
+                self.diseases.append(disease)
+
+    def to_dict(self):
+        time_stamp = time.mktime(self.date.timetuple())
+        rv = {
+            "id": self.record_id,
+            "date": time_stamp,
+            "satisfying": self.satisfying,
+            "comment": self.comment,
+            "user": self.user.to_dict(),
+            "diseases": []
+        }
+        for disease in self.diseases:
+            rv["diseases"].append(disease.to_dict())
+        return rv
