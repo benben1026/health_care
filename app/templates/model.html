@@ -57,12 +57,11 @@ function get_position_lev1(level1){
 			var targetDiv = document.getElementById('selectLev');
 			var str = "";
 			for(var i = 0; i < data.length; i++){
-				str += "<a class='list-group-item my-list-group-item flip' ";
+				str += "<a href='javascript:void(0);'  onmouseenter='enter(this)' onmouseleave='leave()' class='list-group-item my-list-group-item flip' ";
 				str += "name='";
 				temp = data[i][1];
 				temp = temp.replace(/ /g,'');
 				temp = stripscript(temp);
-				console.log(temp);
 				str += temp;
 				str += "'";
 				str += "onclick='getLev2(this)'>";
@@ -72,17 +71,18 @@ function get_position_lev1(level1){
 			targetDiv.innerHTML = str;
 			if(show3D == true){
 				$('#myFrame').hide();
+				show3D = false;
 				var path = "../static/summer/images/";
 				path += gender;
 				path += "-";
 				path += level1;
 				path += ".png";
-				console.log(path);
 				$('#level1-image').attr("src",path);
 				$('#level1-image').show();
 				$('#modelDisplay').show();
 			}
-			show3D = true;
+			else
+				show3D = true;
 			if( firstVisit == "1"){
 				firstVisit = "0";
 				$("#panel").slideToggle("slow");
@@ -157,7 +157,10 @@ function get_position(level1, level2){
 			scrolling="no" 
 			seamless="seamless"
 			src="/static/summer/testMale.html"></iframe>
-			<img id="level1-image" src="../static/summer/images/female-head.png" style="display:none;">
+			<div>
+			<img id="level1-image" src="../static/summer/images/female-head.png" style="position:absolute; top:0px; left:0px; display:none; z-index:0;">
+			<img id="level2-image" src="../static/summer/images/female-arm-hand.png" style="position:absolute; top:0px; left:0px; display:none; z-index:1;">
+			</div>
 		</div>
 		<div>
 			<div class="col-md-3" >
@@ -223,12 +226,31 @@ $(window).on("positionChanged", function(e){
 	}
 });
 
-$('.filp').on("mouseenter",function(){
+//when mouse enter/leave the a tag with class .flip
+function enter(temp){
+	if(show3D == false){
+		var name = $(temp).attr('name');
+		console.log(name);
+		console.log($(temp));
+		var str = "../static/summer/images/";
+		str += gender;
+		str += "-";
+		str += position_level1;
+		str += "-";
+		str += name;
+		str += ".png";
+		console.log(str);
+		$('#level2-image').attr("src",str);
+		$('#level2-image').show();
+	}
+		
+}
+function leave(){
+	if(show3D == false){
+		$('#level2-image').hide();
+	}
+}
 
-});
-$('.filp').on("mouseleave",function(){
-
-});
 
 function getLev2(temp){
 	$(temp).removeClass('my-list-group-item');
