@@ -1,6 +1,7 @@
 var signupCheck = {email:false, username:false, password:false, passwordMatch:false};
-var loginInfo = {login: false, email:'', username:'', gender:'', age:''}
+var loginInfo = {receive: false, login: false, email:'', username:'', gender:'', age:''}
 function checkLogin(){
+    loginInfo.receive = false;
     $.ajax({
         url: '/api/user',
         type: 'GET',
@@ -24,6 +25,9 @@ function checkLogin(){
         },
         error:function(){
             console.log('Error occurs when checking login info');
+        },
+        complete: function(){
+            loginInfo.receive = true;
         }
     })
 }
