@@ -230,8 +230,6 @@ $(window).on("positionChanged", function(e){
 function enter(temp){
 	if(show3D == false){
 		var name = $(temp).attr('name');
-		console.log(name);
-		console.log($(temp));
 		var str = "../static/summer/images/";
 		str += gender;
 		str += "-";
@@ -239,7 +237,6 @@ function enter(temp){
 		str += "-";
 		str += name;
 		str += ".png";
-		console.log(str);
 		$('#level2-image').attr("src",str);
 		$('#level2-image').show();
 	}
