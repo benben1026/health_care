@@ -6,8 +6,8 @@
 {% block content %}
     <script type="text/javascript" src="../static/js/record.js"></script>
     <script type="text/javascript">
-        function updateEvaluationValue(value){
-            $('#satisfyingValue').text(value);
+        function updateEvaluationValue(id, value){
+            $('#' + id).text(value);
         }
     </script>
 
@@ -30,9 +30,9 @@
                         <textarea id="record-add-comment" class="form-control" placeholder="Write down some remarks here..." style="resize:none;"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="record-add-comment"> Evaluation</label>
-                        <input type="range" id="record-add-satisfying" min="0" max="10" onchange="updateEvaluationValue(this.value);" style=""></input>
-                        <p>You give <span id="satisfyingValue">5</span> point(s) to the content of this disease introduction.</p>
+                        <label for="record-add-satisfying"> Evaluation</label>
+                        <input type="range" id="record-add-satisfying" min="0" max="10" onchange="updateEvaluationValue('record-add-satisfyingValue',this.value);" style=""></input>
+                        <p>You give <span id="record-add-satisfyingValue">5</span> point(s) to the content of this disease introduction.</p>
                     </div>
                     <button type="submit" class="btn my-modal-btn btn-block"><span class="glyphicon glyphicon-ok"></span> Submit</button>
                 </form>
@@ -41,11 +41,43 @@
       </div>
     </div>
 
+    <!-- Collected Modal-->
+    <div id="collectedModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Add this disease to my collection</h4>
+            </div>
+            <div class="modal-body">
+                <form id="collected-form" role="form">
+                    <div class="form-group">
+                        <label for="disease-name"><span class="glyphicon glyphicon-envelope"></span> Disease Name</label>
+                        <h3>{{ disease.name }}</h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="collected-comment"> Remark</label>
+                        <textarea id="collected-comment" class="form-control" placeholder="Write down some remarks here..." style="resize:none;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="collected-satisfying"> Evaluation</label>
+                        <input type="range" id="collected-satisfying" min="0" max="10" onchange="updateEvaluationValue('collected-satisfyingValue', this.value);" style=""></input>
+                        <p>You give <span id="collected-satisfyingValue"></span> point(s) to the content of this disease introduction.</p>
+                    </div>
+                    <button type="submit" class="btn my-modal-btn btn-block"><span class="glyphicon glyphicon-ok"></span> Submit</button>
+                </form>
+                    <button id="collected-delete" onclick="deleteRecord()" class="btn my-modal-btn btn-block" style="margin-top:5px;"><span class="glyphicon glyphicon-remove"></span> Delete This Collection</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-md-offset-9" style="margin-top:20px;">
                 <button id="collect" data-toggle="modal" data-target="#collectModal" class="btn btn-info btn-lg" style="width:140px;display:none;"><span class="glyphicon glyphicon-star-empty"> Collect</span></button>
-                <button id="collected" class="btn btn-success btn-lg" style="width:140px;display:none;"><span class="glyphicon glyphicon-star"> Collected</span></button>
+                <button id="collected" data-toggle="modal" data-target="#collectedModal" class="btn btn-success btn-lg" style="width:140px;display:none;"><span class="glyphicon glyphicon-star"> Collected</span></button>
                 <h4 id="nonuser" style="display:none">Please login to collect diseases.</h4>
             </div>
         </div>
