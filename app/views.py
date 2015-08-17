@@ -172,7 +172,7 @@ def authentic():
 
 
 # --------------------------------------Record API --------------------------------------------#
-@app.route('/api/record', methods=['GET', 'POST'])
+@app.route('/api/record', methods=['GET', 'POST', 'PUT'])
 def handle_record():
     if "user" not in session:
         return json.dumps({"Err": "No session"})
@@ -196,6 +196,52 @@ def handle_record():
         records = db_session.query(Record).filter(Record.user_id == session["user"]["id"]).all()
         for record in records:
             rv.append(record.to_dict())
+        return json.dumps(rv)
+    if request.method == "PUT":
+        rv = {"changed": []}
+        inf = request.get_json()
+        record_id = inf.get("record_id", None)
+        if not record_id:
+            return json.dumps({"Err": "Record id missing"})
+        record = db_session.query(Record).filter(Record.record_id == record_id).first()
+        if record.user_id != session["user"]["id"]:
+            return json.dumps({"Err": "Permission denied"})
+        if "diseases_id" in inf:
+            diseases = db_session.query(Disease).filter(Disease.disease_id.in_(inf["diseases_id"])).all()
+            record.diseases = diseases
+            rv["changed"].append("diseases_id")
+        for column_name in inf:
+            if column_name != "record_id" and column_name != "user_id":
+                try:
+                    if getattr(record, column_name):
+                        setattr(record, column_name, inf[column_name])
+                        rv["changed"].append(column_name)
+                except AttributeError:
+                    pass
+        try:
+            db_session.commit()
+        except exc.SQLAlchemyError:
+            db_session.rollback()
+        return json.dumps(rv)
+
+
+@app.route('/api/record/<record_id>', methods=['DELETE'])
+def delete_record(record_id):
+    if "user" not in session:
+        return json.dumps({"Err": "No session"})
+    if request.method == "DELETE":
+        rv = {"deleted": False}
+        record = db_session.query(Record).filter(Record.record_id == record_id).first()
+        if not record:
+            return json.dumps({"Err": "Invalid ID"})
+        if record.user_id != session["user"]["id"]:
+            return json.dumps({"Err": "Permission denied"})
+        db_session.delete(record)
+        try:
+            db_session.commit()
+            rv["deleted"] = True
+        except exc.SQLAlchemyError:
+            db_session.rollback()
         return json.dumps(rv)
 
 
