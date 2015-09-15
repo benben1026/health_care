@@ -294,6 +294,64 @@
             }
           }
         }
+      },
+      "put": {
+        "description": "Update a existing user's information",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "body",
+            "description": "Account information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserReg"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error if exists",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Err"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/password": {
+      "post": {
+        "description": "Send change password confirmation link to the  user's email account",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "body",
+            "description": "New password and confirmation email address, the email address must be the same as the one in your account information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserChangePassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error if exists",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Err"
+              }
+            }
+          }
+        }
       }
     },
     "/api/user/{email}": {
@@ -321,6 +379,81 @@
         }
       }
     },
+    "/api/record": {
+      "get": {
+        "description": "Return all the records relevant to current user",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "reponse the current user information",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Record"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new record",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "record",
+            "in": "body",
+            "description": "Record information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RecordInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error if exists",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Err"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Update an existing user's record",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "body",
+            "description": "Record information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RecordInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error if exists",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Err"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "definitions": {
     "Symptom": {
@@ -462,6 +595,21 @@
         }
       }
     },
+    "UserChangePassword": {
+      "type": "object",
+      "required": [
+        "password",
+        "email"
+      ],
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
     "UserReg": {
       "type": "object",
       "required": [
@@ -518,6 +666,56 @@
       "properties":{
         "exist": {
           "type": "boolean"
+        }
+      }
+    },
+    "Record": {
+      "type": "object",
+      "properties":{
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "date": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "satisfyting": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "comment": {
+          "type": "string",
+        },
+        "user": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/UserClient"
+          }
+        },
+        "diseases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Disease"
+          }
+        }
+      }
+    },
+    "RecordInput": {
+      "type": "object",
+      "properties":{
+        "disease_id":{
+          "type": "array",
+          "items":{
+            "type": "integer"
+          }
+        },
+        "satisfyting": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "comment": {
+          "type": "string",
         }
       }
     },
